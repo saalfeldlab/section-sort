@@ -45,7 +45,6 @@ public class DataToStringFullMatrixTSPLIB implements DataToStringInterface {
 	}
 
 	private double[][] similarities;
-	private double[] currentRow;
 	
 	private final static double DUMMY_VALUE = 0.0;
 
@@ -54,7 +53,6 @@ public class DataToStringFullMatrixTSPLIB implements DataToStringInterface {
 		this.n = n + 1;
 		this.dummyIndex = n;
 		similarities = new double[ this.n ][ this.n ];
-		currentRow = similarities[0];
 	}
 
 	@Override
