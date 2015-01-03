@@ -28,21 +28,21 @@ public class DataToStringFullMatrixTSPLIB implements DataToStringInterface {
 	 * 
 	 */
 	public DataToStringFullMatrixTSPLIB() {
-		this(
-				"NAME: SORT" + System.getProperty("line.separator")
-				+ "TYPE: TSP" + System.getProperty("line.separator")
-				+ "COMMENT: Philipp Hanslovsky" + System.getProperty("line.separator")
-				+ "DIMENSION: %d" + System.getProperty("line.separator")
-				+ "EDGE_WEIGHT_TYPE: EXPLICIT" + System.getProperty("line.separator")
-				+ "EDGE_DATA_FORMAT: EDGE_LIST" + System.getProperty("line.separator")
-				+ "EDGE_WEIGHT_FORMAT: FULL_MATRIX" + System.getProperty("line.separator")
-				+ "NODE_COORD_TYPE: NO_COORDS" + System.getProperty("line.separator")
-				+ "DISPLAY_DATA_TYPE: NO_DISPLAY" + System.getProperty("line.separator")
-				+ "EDGE_WEIGHT_SECTION" + System.getProperty("line.separator")
-		);
+		this(DataToStringFullMatrixTSPLIB.createBaseStringWithComment( "" )	);
 	}
 
-
+	public static String createBaseStringWithComment( final String comment ) {
+		return "NAME: SORT" + System.getProperty("line.separator")
+		+ "TYPE: TSP" + System.getProperty("line.separator")
+		+ "COMMENT: " + comment + System.getProperty("line.separator")
+		+ "DIMENSION: %d" + System.getProperty("line.separator")
+		+ "EDGE_WEIGHT_TYPE: EXPLICIT" + System.getProperty("line.separator")
+		+ "EDGE_DATA_FORMAT: EDGE_LIST" + System.getProperty("line.separator")
+		+ "EDGE_WEIGHT_FORMAT: FULL_MATRIX" + System.getProperty("line.separator")
+		+ "NODE_COORD_TYPE: NO_COORDS" + System.getProperty("line.separator")
+		+ "DISPLAY_DATA_TYPE: NO_DISPLAY" + System.getProperty("line.separator")
+		+ "EDGE_WEIGHT_SECTION" + System.getProperty("line.separator");
+	}
 
 	private double[][] similarities;
 	private double[] currentRow;
