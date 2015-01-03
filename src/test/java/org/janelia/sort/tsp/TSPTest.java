@@ -8,10 +8,16 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.util.ArrayList;
 
+import net.imglib2.Cursor;
+import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.ImagePlusAdapter;
 import net.imglib2.img.Img;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.img.imageplus.FloatImagePlus;
 import net.imglib2.type.numeric.real.FloatType;
+import net.imglib2.view.Views;
 
 import org.janelia.sort.tsp.conversion.DataToStringFullMatrixTSPLIB;
 import org.janelia.sort.tsp.conversion.SimilarityToDistanceSigmoid;
@@ -24,10 +30,13 @@ public class TSPTest {
 	final DataToStringFullMatrixTSPLIB converter           = new DataToStringFullMatrixTSPLIB();
 	final SimilarityToDistanceSigmoid similarityToDistance = new SimilarityToDistanceSigmoid( 1000.0, 0.0, 1000000.0 );
 	final String referencePath                             = "src/test/java/org/janelia/sort/tsp/excerpt-tsp.dat";
-
+	
+	final String matrixWithHolesPath    = "src/test/java/org/janelia/sort/tsp/AVG_inlier ratio matrix.tif";
+	final String matrixWithoutHolesPath = "src/test/java/org/janelia/sort/tsp/AVG-no-empty.tif";
+	
 
 	@Test
-	public void test() {
+	public void testConvertMatrix() {
 		final ImagePlus imp      = new ImagePlus( path );
 		final Img<FloatType> img = ImageJFunctions.wrapFloat( imp );
 		final String s           = TSP.convertMatrix( img, converter, similarityToDistance );
@@ -63,6 +72,30 @@ public class TSPTest {
 			Assert.fail( "Error accessing file " + referencePath );
 		} 
 		
+	}
+	
+	@Test
+	public void testCleanMatrix() {
+		final FloatImagePlus<FloatType> matrixWithHoles             = ImagePlusAdapter.wrapFloat( new ImagePlus( matrixWithHolesPath ) );
+		final FloatImagePlus<FloatType> matrixWithoutHolesReference = ImagePlusAdapter.wrapFloat( new ImagePlus( matrixWithoutHolesPath ) );
+		
+		final ArrayList<Long> keptIndices    = new ArrayList< Long >();
+		final ArrayList<Long> removedIndices = new ArrayList< Long >();
+		
+		final RandomAccessibleInterval<FloatType> matrixWithoutHoles = TSP.cleanMatrix( matrixWithHoles, removedIndices, keptIndices );
+		
+		Assert.assertEquals( keptIndices.size(), matrixWithoutHolesReference.dimension( 0 ) );
+		
+		Assert.assertEquals( keptIndices.size() + removedIndices.size(), matrixWithHoles.dimension( 0 ) );
+		
+		for ( int d = 0; d < matrixWithoutHoles.numDimensions(); ++d )
+			Assert.assertEquals( matrixWithoutHoles.dimension( d ), matrixWithoutHolesReference.dimension( d ) );
+		
+		final Cursor<FloatType> ref = Views.flatIterable( matrixWithoutHolesReference ).cursor();
+		final Cursor<FloatType> res = Views.flatIterable( matrixWithoutHoles ).cursor();
+		while( ref.hasNext() ) {
+			Assert.assertEquals( res.next(), ref.next() );
+		}
 	}
 
 }
