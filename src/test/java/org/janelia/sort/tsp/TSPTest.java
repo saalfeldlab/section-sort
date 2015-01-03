@@ -53,7 +53,7 @@ public class TSPTest {
 			Assert.fail( "Could not find file " + referencePath );
 		}
 		
-		String line = null;  
+		String line = null;
 		try {
 			for (int index = 0; (line = br.readLine()) != null; ++index )  
 			{
