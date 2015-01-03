@@ -3,7 +3,12 @@
  */
 package org.janelia.sort.tsp;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
@@ -151,4 +156,81 @@ public class TSP {
 		
 	}
 	
+	
+	public static void runConcordeTSPSolverWithDefaultConcorde( 
+			final String inputFileName, 
+			final String outputFileName
+			) throws IOException {
+		runConcordeTSPSolverWithDefaultConcorde( inputFileName, outputFileName, "" );
+	}
+	
+	
+	public static void runConcordeTSPSolverWithDefaultConcorde( 
+			final String inputFileName, 
+			final String outputFileName, 
+			final String additionalArgument 
+			) throws IOException {
+		runConcordeTSPSolver( "concorde", inputFileName, outputFileName, additionalArgument );
+	}
+	
+	
+	public static void runConcordeTSPSolver( 
+			final String concordeExecutablePath, 
+			final String inputFileName, 
+			final String outputFileName
+			) throws IOException {
+		runConcordeTSPSolver( concordeExecutablePath, inputFileName, outputFileName, "" );
+	}
+	
+	
+	public static void runConcordeTSPSolver( 
+			final String concordeExecutablePath, 
+			final String inputFileName, 
+			final String outputFileName, 
+			final String additionalArgument
+			) throws IOException {
+		final String command = String.format( "%s %s -o %s %s", concordeExecutablePath, additionalArgument, outputFileName, inputFileName );
+		Runtime.getRuntime().exec( command );
+	}
+	
+	public static int[] tspResultToArray( final String tspResultFileName, final int n ) {
+		return tspResultToArray(tspResultFileName, n, Charset.defaultCharset() );
+	}
+	
+	public static int[] tspResultToArray( final String tspResultFileName, final int n, final Charset cs ) {
+		final int[] result = new int[ n ];
+		try {
+			final List<String> lines = Files.readAllLines( Paths.get( tspResultFileName), cs);
+			final int nVariables = Integer.parseInt( lines.get( 0 ) );
+			if ( nVariables != n+1 )
+				return null;
+			int targetIndex = 0;
+			for ( int listIndex = 1; listIndex < lines.size(); ++listIndex ) {
+				final String[] currSplit = lines.get( listIndex ).split( " " );
+				for ( final String s : currSplit ) {
+					final int val = Integer.parseInt( s );
+					if ( val == n )
+						continue;
+					result[targetIndex] = val;
+					++targetIndex;
+				}
+			}
+		} catch (final IOException e) {
+			return null;
+		}
+		return result;
+	}
+	
+	
+	public static void main(final String[] args) throws IOException {
+		
+	}
+	
 }
+
+
+
+
+
+
+

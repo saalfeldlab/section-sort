@@ -34,6 +34,12 @@ public class TSPTest {
 	final String matrixWithHolesPath    = "src/test/java/org/janelia/sort/tsp/AVG_inlier ratio matrix.tif";
 	final String matrixWithoutHolesPath = "src/test/java/org/janelia/sort/tsp/AVG-no-empty.tif";
 	
+	final String concordeExecutablePath = "/home/phil/local/build/concorde4/TSP/concorde";
+	final String inputFileName          = "src/test/java/org/janelia/sort/tsp/excerpt-tsp.dat";
+	final String outputFileName         = "src/test/java/org/janelia/sort/tsp/excerpt-result.txt";
+	final int concordeSeed     = 100;
+	final int[] orderReference = new int[]{0, 21, 20, 19, 18, 17, 7, 6, 5, 10, 9, 8, 13, 12, 11, 16, 15, 14, 4, 3, 2, 1};
+	
 
 	@Test
 	public void testConvertMatrix() {
@@ -96,6 +102,19 @@ public class TSPTest {
 		while( ref.hasNext() ) {
 			Assert.assertEquals( res.next(), ref.next() );
 		}
+	}
+	
+	@Test
+	public void testTSPSolver() {
+		
+		try {
+			TSP.runConcordeTSPSolver( concordeExecutablePath, inputFileName, outputFileName, String.format("-s %d", concordeSeed ) );
+		} catch (final IOException e) {
+//			e.printStackTrace();
+			Assert.fail();
+		}
+		final int[] result = TSP.tspResultToArray( outputFileName, 22 );
+		Assert.assertArrayEquals( orderReference, result );
 	}
 
 }
