@@ -1,5 +1,13 @@
 package org.janelia.sort.tsp.conversion;
 
+/**
+ * @author Philipp Hanslovsky <hanslovskyp@janelia.hhmi.org>
+ * 
+ * Transfer similarity to distance d using a sigmoid-like function:
+ * 
+ * d = f / ( s + exp(-|similarity - 1.0|)
+ *
+ */
 public class SimilarityToDistanceSigmoid implements
 		SimilarityToDistanceInterface {
 	
@@ -8,9 +16,9 @@ public class SimilarityToDistanceSigmoid implements
 	private final double nanReplacement;
 
 	/**
-	 * @param factor
-	 * @param summand
-	 * @param nanReplacement
+	 * @param factor f
+	 * @param summand s
+	 * @param nanReplacement replace NaN similarity values with this value instead
 	 */
 	public SimilarityToDistanceSigmoid(final double factor, final double summand,
 			final double nanReplacement) {
@@ -23,7 +31,7 @@ public class SimilarityToDistanceSigmoid implements
 	
 
 	/**
-	 * @param factor
+	 * @param factor f
 	 */
 	public SimilarityToDistanceSigmoid( final double factor ) {
 		this( factor, 0.0, 0.0 );
