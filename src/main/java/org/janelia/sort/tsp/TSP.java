@@ -157,6 +157,12 @@ public class TSP {
 	}
 	
 	
+	/**
+	 * Make external call to concorde solver, assuming that the concorde executable path is just "concorde"
+	 * @param inputFileName file containing tsp in full matrix tsplib format
+	 * @param outputFileName output file for concorde, will be overwritten if existing
+	 * @throws IOException
+	 */
 	public static void runConcordeTSPSolverWithDefaultConcorde( 
 			final String inputFileName, 
 			final String outputFileName
@@ -165,6 +171,13 @@ public class TSP {
 	}
 	
 	
+	/**
+	 * Make external call to concorde solver, assuming that the concorde executable path is just "concorde"
+	 * @param inputFileName file containing tsp in full matrix tsplib format
+	 * @param outputFileName output file for concorde, will be overwritten if existing
+	 * @param additionalArgument additional arguments for concorde, i.e. seed
+	 * @throws IOException
+	 */
 	public static void runConcordeTSPSolverWithDefaultConcorde( 
 			final String inputFileName, 
 			final String outputFileName, 
@@ -174,6 +187,13 @@ public class TSP {
 	}
 	
 	
+	/**
+	 * Make external call to concorde solver
+	 * @param concordeExecutablePath path to concorde executable
+	 * @param inputFileName file containing tsp in full matrix tsplib format
+	 * @param outputFileName output file for concorde, will be overwritten if existing
+	 * @throws IOException
+	 */
 	public static void runConcordeTSPSolver( 
 			final String concordeExecutablePath, 
 			final String inputFileName, 
@@ -183,6 +203,14 @@ public class TSP {
 	}
 	
 	
+	/**
+	 * Make external call to concorde solver
+	 * @param concordeExecutablePath path to concorde executable
+	 * @param inputFileName file containing tsp in full matrix tsplib format
+	 * @param outputFileName output file for concorde, will be overwritten if existing
+	 * @param additionalArgument additional arguments for concorde, i.e. seed
+	 * @throws IOException
+	 */
 	public static void runConcordeTSPSolver( 
 			final String concordeExecutablePath, 
 			final String inputFileName, 
@@ -193,9 +221,11 @@ public class TSP {
 		Runtime.getRuntime().exec( command );
 	}
 	
+	
 	public static int[] tspResultToArray( final String tspResultFileName, final int n ) {
 		return tspResultToArray(tspResultFileName, n, Charset.defaultCharset() );
 	}
+	
 	
 	public static int[] tspResultToArray( final String tspResultFileName, final int n, final Charset cs ) {
 		final int[] result = new int[ n ];
