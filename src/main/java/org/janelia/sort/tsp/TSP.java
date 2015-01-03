@@ -81,7 +81,7 @@ public class TSP {
 			final ArrayList< Long > keptIndices
 			)
 	{
-		return cleanMatrix(matrix, removedIndices, keptIndices, new ArrayImgFactory<T>() );
+		return cleanMatrix( matrix, removedIndices, keptIndices, new ArrayImgFactory<T>() );
 	}
 	
 	/**
