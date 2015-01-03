@@ -222,23 +222,40 @@ public class TSP {
 	}
 	
 	
+	/**
+	 * Translate concorde result into array that associates the array index with sections in the original matrix
+	 * @param tspResultFileName path to the output of the concorde output
+	 * @param n number of sections
+	 * @return int[] that associates with each index (of the target matrix) the reference section from the original matrix, return value is null in case of exception
+	 */
 	public static int[] tspResultToArray( final String tspResultFileName, final int n ) {
 		return tspResultToArray(tspResultFileName, n, Charset.defaultCharset() );
 	}
 	
 	
+	/**
+	 * Translate concorde result into array that associates the array index with sections in the original matrix
+	 * @param tspResultFileName path to the output of the concorde output
+	 * @param n number of sections
+	 * @param cs charset for text file
+	 * @return int[] that associates with each index (of the target matrix) the reference section from the original matrix, return value is null in case of exception
+	 */
 	public static int[] tspResultToArray( final String tspResultFileName, final int n, final Charset cs ) {
 		final int[] result = new int[ n ];
 		try {
 			final List<String> lines = Files.readAllLines( Paths.get( tspResultFileName), cs);
+			// first line is number of variables, which must be n+1 because of dummy variable in TSP
 			final int nVariables = Integer.parseInt( lines.get( 0 ) );
 			if ( nVariables != n+1 )
-				return null;
+				return null; // TODO Something better than returning null?
 			int targetIndex = 0;
+			// loop through result and add numbers into result array in the order in which they appear
+			// ignore dummy variable with index n
 			for ( int listIndex = 1; listIndex < lines.size(); ++listIndex ) {
 				final String[] currSplit = lines.get( listIndex ).split( " " );
 				for ( final String s : currSplit ) {
 					final int val = Integer.parseInt( s );
+					// dummy variable has index n ~> ignore
 					if ( val == n )
 						continue;
 					result[targetIndex] = val;
@@ -246,7 +263,7 @@ public class TSP {
 				}
 			}
 		} catch (final IOException e) {
-			return null;
+			return null; // TODO Something better than returning null?
 		}
 		return result;
 	}
