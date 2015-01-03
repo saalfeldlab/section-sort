@@ -3,21 +3,16 @@
  */
 package org.janelia.sort.tsp;
 
-import ij.ImagePlus;
-
 import java.util.ArrayList;
 
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.ImagePlusAdapter;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
-import net.imglib2.img.imageplus.FloatImagePlus;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
@@ -68,6 +63,13 @@ public class TSP {
 	}
 	
 	
+	/**
+	 * Clean similarity matrix from "empty" sections 
+	 * @param matrix input matrix
+	 * @param removedIndices output parameter for removed row/column indices
+	 * @param keptIndices output parameter for remaining row/column indices
+	 * @return matrix without holes. If the original matrix does not have any holes, return original matrix.
+	 */
 	public static < T extends RealType< T > & NativeType< T > > RandomAccessibleInterval< T > cleanMatrix(
 			final RandomAccessibleInterval< T > matrix,
 			final ArrayList< Long > removedIndices,
@@ -77,7 +79,14 @@ public class TSP {
 		return cleanMatrix(matrix, removedIndices, keptIndices, new ArrayImgFactory<T>() );
 	}
 	
-	
+	/**
+	 * Clean similarity matrix from "empty" sections 
+	 * @param matrix input matrix
+	 * @param removedIndices output parameter for removed row/column indices
+	 * @param keptIndices output parameter for remaining row/column indices
+	 * @param factory ImgFactory used for creating output matrix.
+	 * @return matrix without holes. If the original matrix does not have any holes, return original matrix.
+	 */
 	public static < T extends RealType< T > & NativeType< T > > RandomAccessibleInterval< T > cleanMatrix(
 			final RandomAccessibleInterval< T > matrix,
 			final ArrayList< Long > removedIndices,
@@ -92,22 +101,31 @@ public class TSP {
 		
 		removedIndices.clear(); // maybe do not call clear?
 		keptIndices.clear(); // maybe do not call clear?
+		// loop over all rows and
+		// if row is entirely NaN/0.0:
+		//    store index for removal
+		// else:
+		//    store index for result matrix
 		for ( long i = 0; i < n; ++i ) {
 			final Cursor<T> row = Views.flatIterable( Views.hyperSlice( matrix, 1, i ) ).cursor();
 			boolean isBad = true;
 			while ( row.hasNext() ) {
 				final double val = row.next().getRealDouble();
+				// as soon as a non-zero value is also not NaN, break and store index
 				if ( !Double.isNaN( val ) && val != 0.0 ) {
 					isBad = false;
 					keptIndices.add( i );
 					break;
 				}
 			}
+			// if only zero or NaN values, remove index
 			if ( isBad ) {
 				removedIndices.add( i );
 			}
 		}
 		
+		
+		// if nothing needs to be removed, return original matrix, else create matrix w/o removed indices
 		if ( removedIndices.size() > 0 ) {
 			final long[] newDimension = new long[] { n - removedIndices.size(), n - removedIndices.size() };
 			final Img<T> result     = factory.create( newDimension, matrix.randomAccess().get() );
@@ -115,10 +133,14 @@ public class TSP {
 			final RandomAccess<T> r = matrix.randomAccess();
 			while( c.hasNext() ) {
 				c.fwd();
+				// get coordinates of target images and look up the corresponding indices of the original matrix
+				// in the list of saved coordinates (keptIndices)
 				final Long xTrans = keptIndices.get( c.getIntPosition( 0 ) );
 				final Long yTrans = keptIndices.get( c.getIntPosition( 1 ) );
 				r.setPosition( xTrans, 0 );
 				r.setPosition( yTrans, 1 );
+				// write value of the corresponding position within the old matrix into the current position
+				// of the result matrix
 				c.get().set( r.get() );
 			}
 			return result;
@@ -129,17 +151,4 @@ public class TSP {
 		
 	}
 	
-	public static void main(final String[] args) {
-		final String fn = "src/test/java/org/janelia/sort/tsp/AVG_inlier ratio matrix-excerpt.tif";
-		final ImagePlus imp = new ImagePlus( fn );
-		final FloatImagePlus<FloatType> img = ImagePlusAdapter.wrapFloat( imp );
-		final ArrayList<Long> removedIndices = new ArrayList< Long >();
-		final ArrayList<Long> keptIndices    = new ArrayList< Long >();
-		
-		final RandomAccessibleInterval<FloatType> result = cleanMatrix( img, removedIndices, keptIndices );
-		System.out.println( removedIndices );
-		System.out.println( keptIndices );
-	}
-	
-
 }
