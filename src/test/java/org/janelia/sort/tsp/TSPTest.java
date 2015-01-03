@@ -37,8 +37,11 @@ public class TSPTest {
 	final String concordeExecutablePath = "/home/phil/local/build/concorde4/TSP/concorde"; // TODO make unit test independent of this path
 	final String inputFileName          = "src/test/java/org/janelia/sort/tsp/excerpt-tsp.dat";
 	final String outputFileName         = "src/test/java/org/janelia/sort/tsp/excerpt-result.txt";
-	final int concordeSeed     = 100;
-	final int[] orderReference = new int[]{0, 21, 20, 19, 18, 17, 7, 6, 5, 10, 9, 8, 13, 12, 11, 16, 15, 14, 4, 3, 2, 1};
+	final String referenceMatrixPath    = "src/test/java/org/janelia/sort/tsp/excerpt-result.tif";
+	
+	final int concordeSeed     = 10;
+	// final int[] orderReference = new int[]{0, 21, 20, 19, 18, 17, 7, 6, 5, 10, 9, 8, 13, 12, 11, 16, 15, 14, 4, 3, 2, 1};
+	final int[] orderReference = new int[]{0, 1, 2, 3, 4, 14, 15, 16, 11, 12, 13, 8, 9, 10, 5, 6, 7, 17, 18, 19, 20, 21};
 	
 
 	@Test
@@ -114,6 +117,23 @@ public class TSPTest {
 		}
 		final int[] result = TSP.tspResultToArray( outputFileName, 22 );
 		Assert.assertArrayEquals( orderReference, result );
+	}
+	
+	
+	@Test
+	public void testRearrangement() {
+		
+		final FloatImagePlus<FloatType> input            = ImagePlusAdapter.wrapFloat( new ImagePlus( path ) );
+		final FloatImagePlus<FloatType> reference        = ImagePlusAdapter.wrapFloat( new ImagePlus( referenceMatrixPath) );
+		final RandomAccessibleInterval<FloatType> output = TSP.rearrangeMatrix( input, orderReference );
+		
+		final Cursor<FloatType> o = Views.flatIterable( output ).cursor();
+		final Cursor<FloatType> r = Views.flatIterable( reference ).cursor();
+		
+		while( o.hasNext() ) {
+			Assert.assertEquals( r.next(), o.next() );
+		}
+		
 	}
 
 }

@@ -268,6 +268,43 @@ public class TSP {
 		return result;
 	}
 	
+	
+	public static < T extends RealType< T > & NativeType< T > >  RandomAccessibleInterval< T > rearrangeMatrix(
+			final RandomAccessibleInterval< T > input,
+			final int[] associations) {
+		return rearrangeMatrix(input, associations, new ArrayImgFactory<T>());
+	}
+	
+	
+	public static < T extends RealType< T > & NativeType< T > >  RandomAccessibleInterval< T > rearrangeMatrix(
+			final RandomAccessibleInterval< T > input,
+			final int[] associations,
+			final ImgFactory< T > factory ) {
+		final Img<T> output = factory.create( input, input.randomAccess().get() );
+		rearrangeMatrix(input, output, associations);
+		return output;
+	}
+	
+	
+	public static < T extends RealType< T > & NativeType< T > >  void rearrangeMatrix(
+			final RandomAccessibleInterval< T > input,
+			final RandomAccessibleInterval< T > output,
+			final int[] associations ) 
+	{
+		final Cursor<T> c       = Views.flatIterable( output ).cursor();
+		final RandomAccess<T> r = input.randomAccess();
+		
+		while( c.hasNext() ) {
+			c.fwd();
+			final int xTrans = associations[ c.getIntPosition( 0 ) ];
+			final int yTrans = associations[ c.getIntPosition( 1 ) ];
+			r.setPosition( xTrans, 0 );
+			r.setPosition( yTrans, 1 );
+			c.get().set( r.get() );
+		}
+	}
+	
+	
 }
 
 
