@@ -19,3 +19,9 @@ hs_err_pid*
 
 # unit test data
 src/test/java/org/janelia/sort/tsp/excerpt-result.txt
+
+# concorde output files
+*.mas
+*.pul
+*.sav
+*.sol
