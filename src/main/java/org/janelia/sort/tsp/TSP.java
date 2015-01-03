@@ -268,11 +268,6 @@ public class TSP {
 		return result;
 	}
 	
-	
-	public static void main(final String[] args) throws IOException {
-		
-	}
-	
 }
 
 
