@@ -269,6 +269,11 @@ public class TSP {
 	}
 	
 	
+	/**
+	 * Rearrange matrix according to order predicted by TSP solution
+	 * @param input original matrix
+	 * @param associations array of index associations from TSP solution
+	 */
 	public static < T extends RealType< T > & NativeType< T > >  RandomAccessibleInterval< T > rearrangeMatrix(
 			final RandomAccessibleInterval< T > input,
 			final int[] associations) {
@@ -276,6 +281,12 @@ public class TSP {
 	}
 	
 	
+	/**
+	 * Rearrange matrix according to order predicted by TSP solution
+	 * @param input original matrix
+	 * @param associations array of index associations from TSP solution
+	 * @param factory {@link ImgFactory} for creating output image
+	 */
 	public static < T extends RealType< T > & NativeType< T > >  RandomAccessibleInterval< T > rearrangeMatrix(
 			final RandomAccessibleInterval< T > input,
 			final int[] associations,
@@ -286,6 +297,12 @@ public class TSP {
 	}
 	
 	
+	/**
+	 * Rearrange matrix according to order predicted by TSP solution
+	 * @param input original matrix
+	 * @param output output matrix, same dimensions as input; content will be overwritten
+	 * @param associations array of index associations from TSP solution
+	 */
 	public static < T extends RealType< T > & NativeType< T > >  void rearrangeMatrix(
 			final RandomAccessibleInterval< T > input,
 			final RandomAccessibleInterval< T > output,
@@ -296,6 +313,8 @@ public class TSP {
 		
 		while( c.hasNext() ) {
 			c.fwd();
+			// index of array is also index of target matrix;
+			// value of array at index is index of source matrix
 			final int xTrans = associations[ c.getIntPosition( 0 ) ];
 			final int yTrans = associations[ c.getIntPosition( 1 ) ];
 			r.setPosition( xTrans, 0 );
