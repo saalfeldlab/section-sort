@@ -16,7 +16,8 @@ public class DataToStringFullMatrixTSPLIB implements DataToStringInterface {
 	private final String baseString;
 	
 	/**
-	 * @param baseString
+	 * Create {@link DataToStringFullMatrixTSPLIB} object with header.
+	 * @param baseString File Header with useful meta information
 	 */
 	public DataToStringFullMatrixTSPLIB(final String baseString) {
 		super();
@@ -25,12 +26,17 @@ public class DataToStringFullMatrixTSPLIB implements DataToStringInterface {
 	
 
 	/**
-	 * 
+	 * Create {@link DataToStringFullMatrixTSPLIB} object with default header with empty comment.
 	 */
 	public DataToStringFullMatrixTSPLIB() {
 		this(DataToStringFullMatrixTSPLIB.createBaseStringWithComment( "" )	);
 	}
 
+	
+	/** Create default header
+	 * @param comment {@link String} that gets inserted into comment meta information
+	 * @return {@link String} header for {@link DataToStringFullMatrixTSPLIB}
+	 */
 	public static String createBaseStringWithComment( final String comment ) {
 		return "NAME: SORT" + System.getProperty("line.separator")
 		+ "TYPE: TSP" + System.getProperty("line.separator")
