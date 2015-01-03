@@ -12,5 +12,10 @@
 hs_err_pid*
 /target/
 
+# eclipse dotfiles
+.classpath
+.project
+.settings
+
 # unit test data
 src/test/java/org/janelia/sort/tsp/excerpt-result.txt
