@@ -76,11 +76,12 @@ public class DataToStringFullMatrixTSPLIB implements DataToStringInterface {
 			}
 			sb.append( (int)row[dummyIndex] ).append( "\n" );
 		}
-		final double[] row = similarities[dummyIndex];
+		
+		// need to append row filled with DUMMY_VALUE for dummy element
 		for ( int j = 0; j < dummyIndex; ++j ) {
-			sb.append( (int)row[j] ).append(" ");
+			sb.append( (int)DataToStringFullMatrixTSPLIB.DUMMY_VALUE ).append(" ");
 		}
-		sb.append((int)row[dummyIndex]).append("\n").append("EOF");
+		sb.append( (int)DataToStringFullMatrixTSPLIB.DUMMY_VALUE ).append("\n").append("EOF");
 		return sb.toString();
 	}
 
