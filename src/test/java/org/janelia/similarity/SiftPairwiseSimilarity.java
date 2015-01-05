@@ -78,8 +78,17 @@ public class SiftPairwiseSimilarity {
 	
 	
 	/**
-	 * @param p
-	 * helper
+	 * @param p Parameters for feature extraction and matching.
+	 * Construct SiftPairwiseSimilarity with default parameters.
+	 */
+	public SiftPairwiseSimilarity() {
+		this( generateDefaultParameters() );
+	}
+	
+	
+	/**
+	 * @param p Parameters for feature extraction and matching.
+	 * Construct SiftPairwiseSimilarity with parameters p.
 	 */
 	public SiftPairwiseSimilarity(final Param p) {
 		super();
