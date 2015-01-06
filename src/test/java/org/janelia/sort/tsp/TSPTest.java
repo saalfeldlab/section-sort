@@ -88,14 +88,16 @@ public class TSPTest {
 		final FloatImagePlus<FloatType> matrixWithHoles             = ImagePlusAdapter.wrapFloat( new ImagePlus( matrixWithHolesPath ) );
 		final FloatImagePlus<FloatType> matrixWithoutHolesReference = ImagePlusAdapter.wrapFloat( new ImagePlus( matrixWithoutHolesPath ) );
 		
+
+		
 		final ArrayList<Long> keptIndices    = new ArrayList< Long >();
 		final ArrayList<Long> removedIndices = new ArrayList< Long >();
 		
 		final RandomAccessibleInterval<FloatType> matrixWithoutHoles = TSP.cleanMatrix( matrixWithHoles, removedIndices, keptIndices );
 		
-		Assert.assertEquals( keptIndices.size(), matrixWithoutHolesReference.dimension( 0 ) );
+		Assert.assertEquals( matrixWithoutHolesReference.dimension( 0 ), keptIndices.size() );
 		
-		Assert.assertEquals( keptIndices.size() + removedIndices.size(), matrixWithHoles.dimension( 0 ) );
+		Assert.assertEquals( matrixWithHoles.dimension( 0 ), keptIndices.size() + removedIndices.size() );
 		
 		for ( int d = 0; d < matrixWithoutHoles.numDimensions(); ++d )
 			Assert.assertEquals( matrixWithoutHoles.dimension( d ), matrixWithoutHolesReference.dimension( d ) );
