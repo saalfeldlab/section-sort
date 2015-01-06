@@ -54,7 +54,7 @@ public class TSP {
 		
 		// for each row convert each column and 
 		for ( int i = 0; i < n; ++i ) {
-			final IntervalView<T> row = Views.hyperSlice( matrix, 1, i );
+			final IntervalView<T> row = Views.hyperSlice( matrix, 0, i );
 			final Cursor<T> r         = Views.flatIterable( row ).cursor();
 			for ( int j = 0; r.hasNext(); ++j ) {
 				converter.addSimilarity( i, j, similarityToDistance.convert( r.next().getRealDouble() ) );
@@ -112,7 +112,7 @@ public class TSP {
 		// else:
 		//    store index for result matrix
 		for ( long i = 0; i < n; ++i ) {
-			final Cursor<T> row = Views.flatIterable( Views.hyperSlice( matrix, 1, i ) ).cursor();
+			final Cursor<T> row = Views.flatIterable( Views.hyperSlice( matrix, 0, i ) ).cursor();
 			boolean isBad = true;
 			while ( row.hasNext() ) {
 				final double val = row.next().getRealDouble();
