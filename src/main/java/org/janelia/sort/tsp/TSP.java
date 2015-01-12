@@ -3,7 +3,11 @@
  */
 package org.janelia.sort.tsp;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -243,7 +247,14 @@ public class TSP {
 	public static int[] tspResultToArray( final String tspResultFileName, final int n, final Charset cs ) {
 		final int[] result = new int[ n ];
 		try {
-			final List<String> lines = Files.readAllLines( Paths.get( tspResultFileName), cs);
+//			final List<String> lines = Files.readAllLines( Paths.get( tspResultFileName), cs);
+			ArrayList<String> lines = new ArrayList< String >();
+			File f = new File( tspResultFileName );
+			FileReader fr = new FileReader( f );
+			BufferedReader br = new BufferedReader( fr );
+			String line = null;
+			while ( ( line = br.readLine() ) != null )
+				lines.add( line );
 			// first line is number of variables, which must be n+1 because of dummy variable in TSP
 			final int nVariables = Integer.parseInt( lines.get( 0 ) );
 			if ( nVariables != n+1 )
