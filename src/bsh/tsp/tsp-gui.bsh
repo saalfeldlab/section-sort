@@ -1,0 +1,60 @@
+import ij.IJ;
+import ij.ImagePlus;
+import ij.gui.GenericDialog;
+
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.util.Arrays;
+
+import net.imglib2.img.ImagePlusAdapter;
+import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.img.display.imagej.ImageJFunctions;
+
+import org.janelia.sort.tsp.TSP;
+import org.janelia.sort.tsp.conversion.DataToStringFullMatrixTSPLIB;
+import org.janelia.sort.tsp.conversion.SimilarityToDistanceSigmoid;
+
+
+optionsDialog = new GenericDialog( "Options for section-sort using TSP." );
+
+void writeToFile( String data, String fn ) {
+  file = new FileOutputStream( fn );
+  final OutputStream buffer = new BufferedOutputStream(file);
+  final ObjectOutput output = new ObjectOutputStream(buffer);
+  output.writeObject( data );
+  output.close();
+}
+
+optionsDialog.addRadioButtonGroup( "Input is stack or similarity matrix.", new String[] { "stack", "matrix" }, 1, 2, "stack" );
+optionsDialog.addStringField( "Path to input stack or matrix", "/home/phil/workspace/section-sort/src/test/java/org/janelia/sort/tsp/AVG_inlier ratio matrix-excerpt.tif" );
+optionsDialog.addStringField( "Path to concorde executable", "concorde" );
+optionsDialog.showDialog();
+if ( optionsDialog.wasCanceled() ) {
+   // do something, just crash or show error message
+} else {
+  matrixImp     = null;
+  choices       = optionsDialog.getStringFields();
+  radios        = optionsDialog.getRadioButtonGroups();
+  inputPath     = choices.get( 0 ).text;
+  inputIsMatrix = radios.get( 0 ).getSelectedCheckbox().getLabel() == "matrix";
+  concorde      = choices.get( 1 ).text;
+  if ( inputIsMatrix ) {
+    matrixImp = new ImagePlus( inputPath );
+  } else {
+  // do something with data;
+  }
+  matrixImp.show();
+  matrix     = ImagePlusAdapter.wrapFloat( matrixImp );
+  n          = matrixImp.getHeight();
+  distances  = TSP.convertMatrix( matrix, new DataToStringFullMatrixTSPLIB(), new SimilarityToDistanceSigmoid( 10000.0 ) );
+  tmpFileName = "/home/phil/local/tmp/THIS_IS_ONLY_TEMPORARY";
+  tmpFileName2 = "/home/phil/local/tmp/THIS_IS_ALSO_TEMPORARY";
+  writeToFile( distances, tmpFileName );
+  TSP.runConcordeTSPSolver( concorde, tmpFileName, tmpFileName2 );
+  result       = TSP.tspResultToArray( tmpFileName2, (int)n );
+  sortedMatrix = TSP.rearrangeMatrix( matrix, result );
+  ImageJFunctions.show( sortedMatrix );
+  IJ.log( Arrays.toString( result ) );
+}
+
