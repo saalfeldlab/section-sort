@@ -11,12 +11,10 @@ import net.imglib2.img.ImagePlusAdapter;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 
+import org.janelia.similarity.SiftPairwiseSimilarity;
 import org.janelia.sort.tsp.TSP;
 import org.janelia.sort.tsp.conversion.DataToStringFullMatrixTSPLIB;
 import org.janelia.sort.tsp.conversion.SimilarityToDistanceSigmoid;
-
-
-optionsDialog = new GenericDialog( "Options for section-sort using TSP." );
 
 void writeToFile( String data, String fn ) {
   file = new FileOutputStream( fn );
@@ -26,6 +24,8 @@ void writeToFile( String data, String fn ) {
   output.close();
 }
 
+
+optionsDialog = new GenericDialog( "Options for section-sort using TSP." );
 optionsDialog.addRadioButtonGroup( "Input is stack or similarity matrix.", new String[] { "stack", "matrix" }, 1, 2, "stack" );
 optionsDialog.addStringField( "Path to input stack or matrix", "/home/phil/workspace/section-sort/src/test/java/org/janelia/sort/tsp/AVG_inlier ratio matrix-excerpt.tif" );
 optionsDialog.addStringField( "Path to concorde executable", "concorde" );
@@ -42,6 +42,7 @@ if ( optionsDialog.wasCanceled() ) {
   if ( inputIsMatrix ) {
     matrixImp = new ImagePlus( inputPath );
   } else {
+    
   // do something with data;
   }
   matrixImp.show();
