@@ -302,7 +302,7 @@ public class SiftPairwiseSimilarity {
 		p.p = siftp;
 		final SiftPairwiseSimilarity SPS = new SiftPairwiseSimilarity( p );
 		final AffineModel2D model = new AffineModel2D();
-		final ImagePlus impMatrix = SPS.calculateSimilarityMatrix(imp, model);
+		final ImagePlus impMatrix = SPS.calculateSimilarityMatrix( imp, model );
 	}
 	
 }
