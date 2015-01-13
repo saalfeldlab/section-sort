@@ -35,7 +35,8 @@ public class TSPTest {
 	final String matrixWithoutHolesPath = "src/test/java/org/janelia/sort/tsp/AVG-no-empty.tif";
 	
 	// TODO for now, concorde needs to be present in some directory in PATH env variable;
-	// TODO set PATH variable in eclipse by Run -> Run Configurations -> Environment -> New { "Variable" : "PATH", "Value" : "${env_var:PATH}" }
+	// TODO set PATH variable in eclipse by 
+	// TODO Run -> Run Configurations -> Environment -> New { "Variable" : "PATH", "Value" : "/path/to/directory/containing/concorde" }
 	// TODO this might not be platform robust and needs to be replaced by sth. else
 	final String concordeExecutablePath = "concorde";
 	final String inputFileName          = "src/test/java/org/janelia/sort/tsp/excerpt-tsp.dat";
