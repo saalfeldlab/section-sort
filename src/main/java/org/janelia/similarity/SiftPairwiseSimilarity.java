@@ -40,14 +40,14 @@ public class SiftPairwiseSimilarity {
 	 */
 	public static class Param {
 		public FloatArray2DSIFT.Param p;
-		public int maxSteps;
-		public float rod;
-		public float maxEpsilon;
-		public float minInlierRatio;
-		public int minNumInliers;
-		public int nThreads;
-		public boolean showProgress;
-		public int range;
+		public Integer maxSteps;
+		public Float rod;
+		public Float maxEpsilon;
+		public Float minInlierRatio;
+		public Integer minNumInliers;
+		public Integer nThreads;
+		public Boolean showProgress;
+		public Integer range;
 	}
 	
 	/**
