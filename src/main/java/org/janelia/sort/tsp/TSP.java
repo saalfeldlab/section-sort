@@ -167,11 +167,11 @@ public class TSP {
 	 * @param outputFileName output file for concorde, will be overwritten if existing
 	 * @throws IOException
 	 */
-	public static void runConcordeTSPSolverWithDefaultConcorde( 
+	public static Process runConcordeTSPSolverWithDefaultConcorde( 
 			final String inputFileName, 
 			final String outputFileName
 			) throws IOException {
-		runConcordeTSPSolverWithDefaultConcorde( inputFileName, outputFileName, "" );
+		return runConcordeTSPSolverWithDefaultConcorde( inputFileName, outputFileName, "" );
 	}
 	
 	
@@ -182,12 +182,12 @@ public class TSP {
 	 * @param additionalArgument additional arguments for concorde, i.e. seed
 	 * @throws IOException
 	 */
-	public static void runConcordeTSPSolverWithDefaultConcorde( 
+	public static Process runConcordeTSPSolverWithDefaultConcorde( 
 			final String inputFileName, 
 			final String outputFileName, 
 			final String additionalArgument 
 			) throws IOException {
-		runConcordeTSPSolver( "concorde", inputFileName, outputFileName, additionalArgument );
+		return runConcordeTSPSolver( "concorde", inputFileName, outputFileName, additionalArgument );
 	}
 	
 	
@@ -198,12 +198,12 @@ public class TSP {
 	 * @param outputFileName output file for concorde, will be overwritten if existing
 	 * @throws IOException
 	 */
-	public static void runConcordeTSPSolver( 
+	public static Process runConcordeTSPSolver( 
 			final String concordeExecutablePath, 
 			final String inputFileName, 
 			final String outputFileName
 			) throws IOException {
-		runConcordeTSPSolver( concordeExecutablePath, inputFileName, outputFileName, "" );
+		return runConcordeTSPSolver( concordeExecutablePath, inputFileName, outputFileName, "" );
 	}
 	
 	
@@ -215,14 +215,15 @@ public class TSP {
 	 * @param additionalArgument additional arguments for concorde, i.e. seed
 	 * @throws IOException
 	 */
-	public static void runConcordeTSPSolver( 
+	public static Process runConcordeTSPSolver( 
 			final String concordeExecutablePath, 
 			final String inputFileName, 
 			final String outputFileName, 
 			final String additionalArgument
 			) throws IOException {
 		final String command = String.format( "%s %s -o %s %s", concordeExecutablePath, additionalArgument, outputFileName, inputFileName );
-		Runtime.getRuntime().exec( command );
+		Process proc = Runtime.getRuntime().exec( command );
+		return proc;
 	}
 	
 	
