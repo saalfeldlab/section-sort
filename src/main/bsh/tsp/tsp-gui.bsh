@@ -153,6 +153,7 @@ if ( optionsDialog.wasCanceled() ) {
        pf.deleteOnExit();
        problemFilename = pf.getName();
     }
+    // deleteOnExit() does not have any effect? WHY? ImageJ/FIJI related?
     proc   = TSP.runConcordeTSPSolver( concorde, problemFilename, solutionFilename );
     proc.waitFor();
     result = TSP.tspResultToArray( solutionFilename, (int)n );
