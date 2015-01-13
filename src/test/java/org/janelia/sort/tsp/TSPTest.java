@@ -34,7 +34,10 @@ public class TSPTest {
 	final String matrixWithHolesPath    = "src/test/java/org/janelia/sort/tsp/AVG_inlier ratio matrix.tif";
 	final String matrixWithoutHolesPath = "src/test/java/org/janelia/sort/tsp/AVG-no-empty.tif";
 	
-	final String concordeExecutablePath = "/home/phil/local/build/concorde4/TSP/concorde"; // TODO make unit test independent of this path
+	// TODO for now, concorde needs to be present in some directory in PATH env variable;
+	// TODO set PATH variable in eclipse by Run -> Run Configurations -> Environment -> New { "Variable" : "PATH", "Value" : "${env_var:PATH}" }
+	// TODO this might not be platform robust and needs to be replaced by sth. else
+	final String concordeExecutablePath = "concorde";
 	final String inputFileName          = "src/test/java/org/janelia/sort/tsp/excerpt-tsp.dat";
 	final String outputFileName         = "src/test/java/org/janelia/sort/tsp/excerpt-result.txt";
 	final String referenceMatrixPath    = "src/test/java/org/janelia/sort/tsp/excerpt-result.tif";
