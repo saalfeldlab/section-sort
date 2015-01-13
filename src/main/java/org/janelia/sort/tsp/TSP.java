@@ -318,7 +318,7 @@ public class TSP {
 	public static < T extends RealType< T > & NativeType< T > >  void rearrangeMatrix(
 			final RandomAccessibleInterval< T > input,
 			final RandomAccessibleInterval< T > output,
-			final int[] associations ) 
+			final int[] associations )
 	{
 		final Cursor<T> c       = Views.flatIterable( output ).cursor();
 		final RandomAccess<T> r = input.randomAccess();
