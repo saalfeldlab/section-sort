@@ -128,8 +128,9 @@ if ( optionsDialog.wasCanceled() ) {
     tmpFileName = "/home/phil/local/tmp/THIS_IS_ONLY_TEMPORARY";
     tmpFileName2 = "/home/phil/local/tmp/THIS_IS_ALSO_TEMPORARY";
     writeToFile( distances, tmpFileName );
-    TSP.runConcordeTSPSolver( concorde, tmpFileName, tmpFileName2 );
-    result       = TSP.tspResultToArray( tmpFileName2, (int)n );
+    proc   = TSP.runConcordeTSPSolver( concorde, tmpFileName, tmpFileName2 );
+    proc.waitFor();
+    result = TSP.tspResultToArray( tmpFileName2, (int)n );
     sortedMatrix = TSP.rearrangeMatrix( matrix, result );
     ImageJFunctions.show( sortedMatrix, "sorted matrix" );
     IJ.log( Arrays.toString( result ) );
