@@ -27,6 +27,7 @@ void writeToFile( String data, String fn ) {
   final ObjectOutput output = new ObjectOutputStream(buffer);
   output.writeObject( data );
   output.close();
+  buffer.close();
 }
 
 
