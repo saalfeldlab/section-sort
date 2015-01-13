@@ -21,13 +21,19 @@ import org.janelia.sort.tsp.conversion.DataToStringFullMatrixTSPLIB;
 import org.janelia.sort.tsp.conversion.SimilarityToDistanceSigmoid;
 
 
-void writeToFile( String data, String fn ) {
-  file = new FileOutputStream( fn );
-  final OutputStream buffer = new BufferedOutputStream(file);
+File writeToFile( String data, String fn ) {
+  file = null;
+  if ( fn.equals( "" ) )
+     file = File.createTempFile( "tmp", null );
+  else
+     file = new File( fn );
+  fs = new FileOutputStream( file.getName() );
+  final OutputStream buffer = new BufferedOutputStream( fs );
   final ObjectOutput output = new ObjectOutputStream(buffer);
   output.writeObject( data );
   output.close();
   buffer.close();
+  return file;
 }
 
 
@@ -49,10 +55,12 @@ void writeToFile( String data, String fn ) {
 
 optionsDialog = new GenericDialog( "Options for section-sort using TSP." );
 optionsDialog.addRadioButtonGroup( "Input is stack or similarity matrix.", new String[] { "stack", "matrix" }, 1, 2, "stack" );
-optionsDialog.addStringField( "Path to input stack or matrix", "/home/phil/workspace/section-sort/src/test/java/org/janelia/sort/tsp/AVG_inlier ratio matrix-excerpt.tif" );
-// optionsDialog.addStringField( "Path to input stack or matrix", "/home/phil/workspace/section-sort/test_data_features.tif" );
-// optionsDialog.addStringField( "Path to input stack or matrix", "" );
+// optionsDialog.addStringField( "Path to input stack or matrix", "/hanslovskyp/workspace/section-sort/src/test/java/org/janelia/sort/tsp/AVG_inlier ratio matrix-excerpt.tif" );
+// optionsDialog.addStringField( "Path to input stack or matrix", "/hanslovskyp/workspace/section-sort/test_data_features.tif" );
+optionsDialog.addStringField( "Path to input stack or matrix", "" );
 optionsDialog.addStringField( "Path to concorde executable", "concorde" );
+optionsDialog.addStringField( "Path to tsp problem file (will be tmp if not specified)", "" );
+optionsDialog.addStringField( "Path to tsp solution file (will be tmp if not specified)", "" );
 optionsDialog.showDialog();
 if ( optionsDialog.wasCanceled() ) {
    // do something, just crash or show error message
@@ -66,6 +74,8 @@ if ( optionsDialog.wasCanceled() ) {
   inputPath     = choices.get( 0 ).text;
   inputIsMatrix = radios.get( 0 ).getSelectedCheckbox().getLabel() == "matrix";
   concorde      = choices.get( 1 ).text;
+  problem       = choices.get( 2 ).text;
+  solution      = choices.get( 3 ).text;
   if ( inputIsMatrix ) {
     matrixImp = new ImagePlus( inputPath );
     matrix     = ImagePlusAdapter.wrapFloat( matrixImp );
@@ -125,12 +135,21 @@ if ( optionsDialog.wasCanceled() ) {
     ImageJFunctions.show( matrix, "original matrix" );
     n          = matrixImp.getHeight();
     distances  = TSP.convertMatrix( matrix, new DataToStringFullMatrixTSPLIB(), new SimilarityToDistanceSigmoid( 10000.0 ) );
-    tmpFileName = "/home/phil/local/tmp/THIS_IS_ONLY_TEMPORARY";
-    tmpFileName2 = "/home/phil/local/tmp/THIS_IS_ALSO_TEMPORARY";
-    writeToFile( distances, tmpFileName );
-    proc   = TSP.runConcordeTSPSolver( concorde, tmpFileName, tmpFileName2 );
+    problemFilename  = problem;
+    solutionFilename = solution;
+    if ( solutionFilename.equals( "" ) ) {
+       sf               = File.createTempFile( "tmp", null );
+       solutionFilename = sf.getName();
+       sf.deleteOnExit();
+    }
+    pf = writeToFile( distances, problemFilename );
+    if ( problemFilename.equals( "" ) ) {
+       pf.deleteOnExit();
+       problemFilename = pf.getName();
+    }
+    proc   = TSP.runConcordeTSPSolver( concorde, problemFilename, solutionFilename );
     proc.waitFor();
-    result = TSP.tspResultToArray( tmpFileName2, (int)n );
+    result = TSP.tspResultToArray( solutionFilename, (int)n );
     sortedMatrix = TSP.rearrangeMatrix( matrix, result );
     ImageJFunctions.show( sortedMatrix, "sorted matrix" );
     IJ.log( Arrays.toString( result ) );
