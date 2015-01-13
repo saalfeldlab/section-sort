@@ -5,7 +5,11 @@ import ij.gui.GenericDialog;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.lang.Number;
+import java.lang.reflect.Field;
 import java.util.Arrays;
+
+import mpicbg.models.AffineModel2D;
 
 import net.imglib2.img.ImagePlusAdapter;
 import net.imglib2.img.array.ArrayImgFactory;
@@ -16,6 +20,7 @@ import org.janelia.sort.tsp.TSP;
 import org.janelia.sort.tsp.conversion.DataToStringFullMatrixTSPLIB;
 import org.janelia.sort.tsp.conversion.SimilarityToDistanceSigmoid;
 
+
 void writeToFile( String data, String fn ) {
   file = new FileOutputStream( fn );
   final OutputStream buffer = new BufferedOutputStream(file);
@@ -25,15 +30,36 @@ void writeToFile( String data, String fn ) {
 }
 
 
+// GenericDialog createDefaultDialog( Object o, String title ) {
+//   dialog = new GenericDialog( title );
+//   for ( Field f : o.getClass().getDeclaredFields() ) {
+//     opt = f.getName();
+//     val = f.get( o );
+//     if ( val instanceof String )
+//       dialog.addStringField( opt, val );
+//     else if ( val instanceof Boolean )
+//       dialog.addRadioButtonGroup( opt, new String[] { "yes", "no" }, 1, 2, val? "yes" : "no" );
+//     else if ( val instanceof Number )
+//       dialog.addNumericField( opt, val, 4 ); // howto deal with number of digits? (4)
+//   }
+//   return dialog;
+// }
+
+
 optionsDialog = new GenericDialog( "Options for section-sort using TSP." );
 optionsDialog.addRadioButtonGroup( "Input is stack or similarity matrix.", new String[] { "stack", "matrix" }, 1, 2, "stack" );
-optionsDialog.addStringField( "Path to input stack or matrix", "/home/phil/workspace/section-sort/src/test/java/org/janelia/sort/tsp/AVG_inlier ratio matrix-excerpt.tif" );
+// optionsDialog.addStringField( "Path to input stack or matrix", "/home/phil/workspace/section-sort/src/test/java/org/janelia/sort/tsp/AVG_inlier ratio matrix-excerpt.tif" );
+// optionsDialog.addStringField( "Path to input stack or matrix", "/home/phil/workspace/section-sort/test_data_features.tif" );
+optionsDialog.addStringField( "Path to input stack or matrix", "" );
 optionsDialog.addStringField( "Path to concorde executable", "concorde" );
 optionsDialog.showDialog();
 if ( optionsDialog.wasCanceled() ) {
    // do something, just crash or show error message
 } else {
+  stackImp      = null;
+  stack         = null;
   matrixImp     = null;
+  matrix        = null;
   choices       = optionsDialog.getStringFields();
   radios        = optionsDialog.getRadioButtonGroups();
   inputPath     = choices.get( 0 ).text;
@@ -41,21 +67,71 @@ if ( optionsDialog.wasCanceled() ) {
   concorde      = choices.get( 1 ).text;
   if ( inputIsMatrix ) {
     matrixImp = new ImagePlus( inputPath );
+    matrix     = ImagePlusAdapter.wrapFloat( matrixImp );
   } else {
+    param = SiftPairwiseSimilarity.generateDefaultParameters();
+    // stackOptionsDialog = createDefaultDialog( param, 
+    //                                           "Options for calculating pairwise similarities." );
+    stackOptionsDialog = new GenericDialog( "Options for calculating pairwise similarities." );
+    stackOptionsDialog.addNumericField( "maxSteps", param.maxSteps, 0 );
+    stackOptionsDialog.addNumericField( "rod", param.rod, 4 );
+    stackOptionsDialog.addNumericField( "maxEpsilon", param.maxEpsilon, 4 );
+    stackOptionsDialog.addNumericField( "minInlierRatio", param.minInlierRatio, 4 );
+    stackOptionsDialog.addNumericField( "minNumInliers", param.minNumInliers, 0 );
+    stackOptionsDialog.addNumericField( "nThreads", param.nThreads, 0 );
+    stackOptionsDialog.addNumericField( "range", param.range, 0 );
+    stackOptionsDialog.addNumericField( "fdSize", param.p.fdSize, 0 );
+    stackOptionsDialog.addNumericField( "fdBins", param.p.fdBins, 0 );
+    stackOptionsDialog.addNumericField( "maxOctaveSize", param.p.maxOctaveSize, 0 );
+    stackOptionsDialog.addNumericField( "minOctaveSize", param.p.minOctaveSize, 0 );
+    stackOptionsDialog.addNumericField( "steps", param.p.steps, 0 );
+    stackOptionsDialog.addNumericField( "initialSigma", param.p.initialSigma, 4 );
+    stackOptionsDialog.addRadioButtonGroup( "Show matrix progress while being filled", new String[] { "yes", "no" }, 1, 2, param.showProgress ? "yes" : "no" );
+    stackOptionsDialog.showDialog();
+    if ( optionsDialog.wasCanceled() ) {
+     // keep default parameters?
+    }
+    values = stackOptionsDialog.getNumericFields();
+    radios = stackOptionsDialog.getRadioButtonGroups();
+
+    param.maxSteps       = Integer.parseInt( values.get( 0 ).text );
+    param.rod            = Float.parseFloat( values.get( 1 ).text );
+    param.maxEpsilon     = Float.parseFloat( values.get( 2 ).text );
+    param.minInlierRatio = Float.parseFloat( values.get( 3 ).text );
+    param.minNumInliers  = Integer.parseInt( values.get( 4 ).text );
+    param.nThreads       = Integer.parseInt( values.get( 5 ).text );
+    param.range          = Integer.parseInt( values.get( 6 ).text );
+    param.showProgress   = radios.get( 0 ).getSelectedCheckbox().getLabel() == "yes";
     
-  // do something with data;
+    param.p.fdSize        = Integer.parseInt( values.get(  7 ).text );
+    param.p.fdBins        = Integer.parseInt( values.get(  8 ).text );
+    param.p.maxOctaveSize = Integer.parseInt( values.get(  9 ).text );
+    param.p.minOctaveSize = Integer.parseInt( values.get( 10 ).text );
+    param.p.steps         = Integer.parseInt( values.get( 11 ).text );
+    param.p.initialSigma  = Float.parseFloat( values.get( 12 ).text );
+    
+    stackImp = new ImagePlus( inputPath );
+    stack    = ImagePlusAdapter.wrapFloat( stackImp );
+    
+    sps       = new SiftPairwiseSimilarity( param );
+    model     = new AffineModel2D();
+    matrixImp = sps.calculateSimilarityMatrix( stackImp, model );
+    matrix    = ImagePlusAdapter.wrapFloat( matrixImp );
+    stackImp.show();
   }
-  matrixImp.show();
-  matrix     = ImagePlusAdapter.wrapFloat( matrixImp );
-  n          = matrixImp.getHeight();
-  distances  = TSP.convertMatrix( matrix, new DataToStringFullMatrixTSPLIB(), new SimilarityToDistanceSigmoid( 10000.0 ) );
-  tmpFileName = "/home/phil/local/tmp/THIS_IS_ONLY_TEMPORARY";
-  tmpFileName2 = "/home/phil/local/tmp/THIS_IS_ALSO_TEMPORARY";
-  writeToFile( distances, tmpFileName );
-  TSP.runConcordeTSPSolver( concorde, tmpFileName, tmpFileName2 );
-  result       = TSP.tspResultToArray( tmpFileName2, (int)n );
-  sortedMatrix = TSP.rearrangeMatrix( matrix, result );
-  ImageJFunctions.show( sortedMatrix );
-  IJ.log( Arrays.toString( result ) );
+
+  if ( matrix != null ) {
+    ImageJFunctions.show( matrix, "original matrix" );
+    n          = matrixImp.getHeight();
+    distances  = TSP.convertMatrix( matrix, new DataToStringFullMatrixTSPLIB(), new SimilarityToDistanceSigmoid( 10000.0 ) );
+    tmpFileName = "/home/phil/local/tmp/THIS_IS_ONLY_TEMPORARY";
+    tmpFileName2 = "/home/phil/local/tmp/THIS_IS_ALSO_TEMPORARY";
+    writeToFile( distances, tmpFileName );
+    TSP.runConcordeTSPSolver( concorde, tmpFileName, tmpFileName2 );
+    result       = TSP.tspResultToArray( tmpFileName2, (int)n );
+    sortedMatrix = TSP.rearrangeMatrix( matrix, result );
+    ImageJFunctions.show( sortedMatrix, "sorted matrix" );
+    IJ.log( Arrays.toString( result ) );
+  }
 }
 
