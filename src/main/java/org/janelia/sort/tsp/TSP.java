@@ -222,7 +222,7 @@ public class TSP {
 			final String additionalArgument
 			) throws IOException {
 		final String command = String.format( "%s %s -o %s %s", concordeExecutablePath, additionalArgument, outputFileName, inputFileName );
-		Process proc = Runtime.getRuntime().exec( command );
+		final Process proc = Runtime.getRuntime().exec( command );
 		return proc;
 	}
 	
@@ -249,10 +249,10 @@ public class TSP {
 		final int[] result = new int[ n ];
 		try {
 //			final List<String> lines = Files.readAllLines( Paths.get( tspResultFileName), cs);
-			ArrayList<String> lines = new ArrayList< String >();
-			File f = new File( tspResultFileName );
-			FileReader fr = new FileReader( f );
-			BufferedReader br = new BufferedReader( fr );
+			final ArrayList<String> lines = new ArrayList< String >();
+			final File f = new File( tspResultFileName );
+			final FileReader fr = new FileReader( f );
+			final BufferedReader br = new BufferedReader( fr );
 			String line = null;
 			while ( ( line = br.readLine() ) != null )
 				lines.add( line );
