@@ -54,3 +54,20 @@ Run
 <concorde-build-dir> && make
 ```
 The TSP solver is now located at `<concorde-build-dir>/TSP/concorde`.
+
+Copy/link the TSP solver into the bin directory of your Fiji distribution.
+```
+cp <concorde-build-dir>/TSP/concorde <fiji-root>/bin
+```
+
+Build section-sort and copy the jar into the jar directory of your Fiji distribution.
+```
+cp <section-sort>/target/section-sort-0.0.1-SNAPSHOT.jar <fiji-root>/jars
+```
+
+Copy section_sort.bsh into the plugins directory of your Fiji distribution.
+```
+cp <section-sort>/src/main/bsh/tsp/section_sort.bsh <fiji-root>/plugins
+```
+The section sort plugin will then appear in the Plugins drop down menu after restarting Fiji or
+refreshing the beanshell scripts (`Plugins -> Scripting -> Refresh BSH Scripts`).
