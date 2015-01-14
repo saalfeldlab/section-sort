@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.lang.Number;
+import java.lang.StringBuilder;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
@@ -50,6 +51,19 @@ File writeToFile( String data, String fn, tmpDir, suffix ) {
 }
 
 
+String join( String separator, Object[] arr ) {
+  size = arr.length;
+  if ( size < 1 )
+    return null;
+  sb = new StringBuilder( arr[0].toString() );
+  for ( int i = 1; i < size; ++i ) {
+    sb.append( separator );
+    sb.append( arr[i].toString() );
+  }
+  return sb.toString();
+}
+
+
 // GenericDialog createDefaultDialog( Object o, String title ) {
 //   dialog = new GenericDialog( title );
 //   for ( Field f : o.getClass().getDeclaredFields() ) {
@@ -78,21 +92,23 @@ optionsDialog.addStringField( "Path to input stack or matrix", "" );
 optionsDialog.addStringField( "Path to concorde executable", "concorde" );
 optionsDialog.addStringField( "Path to tsp problem file (will be tmp if not specified)", "" );
 optionsDialog.addStringField( "Path to tsp solution file (will be tmp if not specified)", "" );
+optionsDialog.addStringField( "Path to section order result file (results will not be written to file if empty)" , "" );
 optionsDialog.showDialog();
 if ( optionsDialog.wasCanceled() ) {
    // do something, just crash or show error message
 } else {
-  stackImp      = null;
-  stack         = null;
-  matrixImp     = null;
-  matrix        = null;
-  choices       = optionsDialog.getStringFields();
-  radios        = optionsDialog.getRadioButtonGroups();
-  inputPath     = choices.get( 0 ).text;
-  inputIsMatrix = radios.get( 0 ).getSelectedCheckbox().getLabel() == "matrix";
-  concorde      = choices.get( 1 ).text;
-  problem       = choices.get( 2 ).text;
-  solution      = choices.get( 3 ).text;
+  stackImp            = null;
+  stack               = null;
+  matrixImp           = null;
+  matrix              = null;
+  choices             = optionsDialog.getStringFields();
+  radios              = optionsDialog.getRadioButtonGroups();
+  inputPath           = choices.get( 0 ).text;
+  inputIsMatrix       = radios.get( 0 ).getSelectedCheckbox().getLabel() == "matrix";
+  concorde            = choices.get( 1 ).text;
+  problem             = choices.get( 2 ).text;
+  solution            = choices.get( 3 ).text;
+  orderedSectionsFile = choices.get( 4 ).text;
   if ( inputIsMatrix ) {
     matrixImp = new ImagePlus( inputPath );
     matrix     = ImagePlusAdapter.wrapFloat( matrixImp );
@@ -182,6 +198,12 @@ if ( optionsDialog.wasCanceled() ) {
     sortedMatrix = TSP.rearrangeMatrix( matrix, result );
     ImageJFunctions.show( sortedMatrix, "sorted matrix" );
     IJ.log( "Section order: " + Arrays.toString( result ) );
+    if ( ! orderedSectionsFile.equals( "" ) ) {
+      resultObjects = new Integer[ result.length ];
+      for ( int i = 0; i < result.length; ++i )
+        resultObjects[i] = result[i];
+      writeToFile( join( "\n", resultObjects ), orderedSectionsFile );
+    }
   }
 }
 
