@@ -22,11 +22,6 @@ import org.janelia.sort.tsp.conversion.DataToStringFullMatrixTSPLIB;
 import org.janelia.sort.tsp.conversion.SimilarityToDistanceSigmoid;
 
 
-// temp files are not created in /tmp, even though documentation says it should:
-// https://docs.oracle.com/javase/6/docs/api/java/io/File.html#createTempFile(java.lang.String, java.lang.String, java.io.File)
-// find out why!
-
-
 File writeToFile( String data, String fn ) {
   return writeToFile( data, fn, null );
 }
