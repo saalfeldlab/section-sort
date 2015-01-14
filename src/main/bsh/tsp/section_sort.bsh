@@ -80,22 +80,6 @@ String join( String separator, Object[] arr ) {
 }
 
 
-// GenericDialog createDefaultDialog( Object o, String title ) {
-//   dialog = new GenericDialog( title );
-//   for ( Field f : o.getClass().getDeclaredFields() ) {
-//     opt = f.getName();
-//     val = f.get( o );
-//     if ( val instanceof String )
-//       dialog.addStringField( opt, val );
-//     else if ( val instanceof Boolean )
-//       dialog.addRadioButtonGroup( opt, new String[] { "yes", "no" }, 1, 2, val? "yes" : "no" );
-//     else if ( val instanceof Number )
-//       dialog.addNumericField( opt, val, 4 ); // howto deal with number of digits? (4)
-//   }
-//   return dialog;
-// }
-
-
 sectionSortTempDir = System.getProperty( "java.io.tmpdir" ) + File.separator + "section-sort";
 new File( sectionSortTempDir ).mkdirs();
 
@@ -105,14 +89,7 @@ fijiBinDir  = fijiRootDir.replaceFirst( File.separator + "$", "" ) + File.separa
 
 optionsDialog = new GenericDialogPlus( "Options for section-sort using TSP." );
 optionsDialog.addRadioButtonGroup( "Input is stack or similarity matrix.", new String[] { "stack", "matrix" }, 1, 2, "stack" );
-// optionsDialog.addStringField( "Path to input stack or matrix", "/hanslovskyp/workspace/section-sort/src/test/java/org/janelia/sort/tsp/AVG_inlier ratio matrix-excerpt.tif" );
-// optionsDialog.addStringField( "Path to input stack or matrix", "/hanslovskyp/workspace/section-sort/test_data_features.tif" );
-// optionsDialog.addStringField( "Path to input stack or matrix (use current image if not specified)", "" );
 optionsDialog.addDirectoryOrFileField( "Path to input stack or matrix (use current image if not specified)", "" );
-// optionsDialog.addStringField( "Path to concorde executable", "concorde" );
-// optionsDialog.addStringField( "Path to tsp problem file (will be tmp if not specified)", "" );
-// optionsDialog.addStringField( "Path to tsp solution file (will be tmp if not specified)", "" );
-// optionsDialog.addStringField( "Path to section order result file (results will not be written to file if empty)" , "" );
 optionsDialog.addDirectoryOrFileField( "Path to section order result file (results will not be written to file if empty)" , "" );
 optionsDialog.showDialog();
 if ( optionsDialog.wasCanceled() ) {
@@ -146,12 +123,6 @@ if ( optionsDialog.wasCanceled() ) {
     stackOptionsDialog.addNumericField( "minNumInliers", param.minNumInliers, 0 );
     stackOptionsDialog.addNumericField( "nThreads", param.nThreads, 0 );
     stackOptionsDialog.addNumericField( "range", param.range, 0 );
-    // stackOptionsDialog.addNumericField( "fdSize", param.p.fdSize, 0 );
-    // stackOptionsDialog.addNumericField( "fdBins", param.p.fdBins, 0 );
-    // stackOptionsDialog.addNumericField( "maxOctaveSize", param.p.maxOctaveSize, 0 );
-    // stackOptionsDialog.addNumericField( "minOctaveSize", param.p.minOctaveSize, 0 );
-    // stackOptionsDialog.addNumericField( "steps", param.p.steps, 0 );
-    // stackOptionsDialog.addNumericField( "initialSigma", param.p.initialSigma, 4 );
     stackOptionsDialog.addRadioButtonGroup( "Show matrix progress while being filled", new String[] { "yes", "no" }, 1, 2, param.showProgress ? "yes" : "no" );
     stackOptionsDialog.showDialog();
     if ( stackOptionsDialog.wasCanceled() ) {
@@ -168,13 +139,6 @@ if ( optionsDialog.wasCanceled() ) {
       param.nThreads       = Integer.parseInt( values.get( 5 ).text );
       param.range          = Integer.parseInt( values.get( 6 ).text );
       param.showProgress   = radios.get( 0 ).getSelectedCheckbox().getLabel() == "yes";
-                      
-      // param.p.fdSize        = Integer.parseInt( values.get(  7 ).text );
-      // param.p.fdBins        = Integer.parseInt( values.get(  8 ).text );
-      // param.p.maxOctaveSize = Integer.parseInt( values.get(  9 ).text );
-      // param.p.minOctaveSize = Integer.parseInt( values.get( 10 ).text );
-      // param.p.steps         = Integer.parseInt( values.get( 11 ).text );
-      // param.p.initialSigma  = Float.parseFloat( values.get( 12 ).text );
                       
       siftOptionsDialog = new GenericDialog( "Options for calculating SIFT features." );
       SIFT.addFields( siftOptionsDialog, param.p );
