@@ -230,6 +230,18 @@ if ( optionsDialog.wasCanceled() ) {
       cleanStack = duplicateWithoutMissing( stackImp.getStack(), remove );
       cleanImp   = new ImagePlus( "clean stack", cleanStack );
       cleanImp.show();
+
+      w = cleanStack.getWidth();
+      h = cleanStack.getHeight();
+      s = cleanStack.getSize();
+      
+      rearrangedCleanStack = new ImageStack( w, h, s );
+      for ( int i = 1; i <= s; ++i ) {
+        p = cleanStack.getProcessor( result[ i - 1 ] + 1 );
+        rearrangedCleanStack.setProcessor( p, i );
+      }
+      rearrangedCleanImp = new ImagePlus( "rearranged clean stack", rearrangedCleanStack );
+      rearrangedCleanImp.show();
     }
   }
 }
