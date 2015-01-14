@@ -85,13 +85,16 @@ String join( String separator, Object[] arr ) {
 sectionSortTempDir = System.getProperty( "java.io.tmpdir" ) + File.separator + "section-sort";
 new File( sectionSortTempDir ).mkdirs();
 
+fijiRootDir = IJ.getDirectory( "imagej" );
+fijiBinDir  = fijiRootDir.replaceFirst( File.separator + "$", "" ) + File.separator + "bin";
+
 
 optionsDialog = new GenericDialog( "Options for section-sort using TSP." );
 optionsDialog.addRadioButtonGroup( "Input is stack or similarity matrix.", new String[] { "stack", "matrix" }, 1, 2, "stack" );
 // optionsDialog.addStringField( "Path to input stack or matrix", "/hanslovskyp/workspace/section-sort/src/test/java/org/janelia/sort/tsp/AVG_inlier ratio matrix-excerpt.tif" );
 // optionsDialog.addStringField( "Path to input stack or matrix", "/hanslovskyp/workspace/section-sort/test_data_features.tif" );
 optionsDialog.addStringField( "Path to input stack or matrix (use current image if not specified)", "" );
-optionsDialog.addStringField( "Path to concorde executable", "concorde" );
+// optionsDialog.addStringField( "Path to concorde executable", "concorde" );
 optionsDialog.addStringField( "Path to tsp problem file (will be tmp if not specified)", "" );
 optionsDialog.addStringField( "Path to tsp solution file (will be tmp if not specified)", "" );
 optionsDialog.addStringField( "Path to section order result file (results will not be written to file if empty)" , "" );
@@ -105,12 +108,13 @@ if ( optionsDialog.wasCanceled() ) {
   matrix              = null;
   choices             = optionsDialog.getStringFields();
   radios              = optionsDialog.getRadioButtonGroups();
-  inputPath           = choices.get( 0 ).text;
+  inputPath           = optionsDialog.getNextString();
+  problem             = optionsDialog.getNextString();
+  solution            = optionsDialog.getNextString();
+  orderedSectionsFile = optionsDialog.getNextString();
   inputIsMatrix       = radios.get( 0 ).getSelectedCheckbox().getLabel() == "matrix";
-  concorde            = choices.get( 1 ).text;
-  problem             = choices.get( 2 ).text;
-  solution            = choices.get( 3 ).text;
-  orderedSectionsFile = choices.get( 4 ).text;
+  concorde            = fijiBinDir.replaceFirst( File.separator + "$", "" ) + File.separator + "concorde";
+  
   if ( inputIsMatrix ) {
     matrixImp = inputPath.equals( "" ) ? IJ.getImage() : new ImagePlus( inputPath );
     matrix     = ImagePlusAdapter.wrapFloat( matrixImp );
