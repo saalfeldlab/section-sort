@@ -178,7 +178,7 @@ if ( optionsDialog.wasCanceled() ) {
     result = TSP.tspResultToArray( solutionFilename, (int)n );
     sortedMatrix = TSP.rearrangeMatrix( matrix, result );
     ImageJFunctions.show( sortedMatrix, "sorted matrix" );
-    IJ.log( Arrays.toString( result ) );
+    IJ.log( "Section order: " + Arrays.toString( result ) );
   }
 }
 
