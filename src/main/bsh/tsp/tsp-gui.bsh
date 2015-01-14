@@ -89,7 +89,7 @@ optionsDialog = new GenericDialog( "Options for section-sort using TSP." );
 optionsDialog.addRadioButtonGroup( "Input is stack or similarity matrix.", new String[] { "stack", "matrix" }, 1, 2, "stack" );
 // optionsDialog.addStringField( "Path to input stack or matrix", "/hanslovskyp/workspace/section-sort/src/test/java/org/janelia/sort/tsp/AVG_inlier ratio matrix-excerpt.tif" );
 // optionsDialog.addStringField( "Path to input stack or matrix", "/hanslovskyp/workspace/section-sort/test_data_features.tif" );
-optionsDialog.addStringField( "Path to input stack or matrix", "" );
+optionsDialog.addStringField( "Path to input stack or matrix (use current image if not specified)", "" );
 optionsDialog.addStringField( "Path to concorde executable", "concorde" );
 optionsDialog.addStringField( "Path to tsp problem file (will be tmp if not specified)", "" );
 optionsDialog.addStringField( "Path to tsp solution file (will be tmp if not specified)", "" );
@@ -111,7 +111,7 @@ if ( optionsDialog.wasCanceled() ) {
   solution            = choices.get( 3 ).text;
   orderedSectionsFile = choices.get( 4 ).text;
   if ( inputIsMatrix ) {
-    matrixImp = new ImagePlus( inputPath );
+    matrixImp = inputPath.equals( "" ) ? IJ.getImage() : new ImagePlus( inputPath );
     matrix     = ImagePlusAdapter.wrapFloat( matrixImp );
   } else {
     param = SiftPairwiseSimilarity.generateDefaultParameters();
@@ -163,7 +163,7 @@ if ( optionsDialog.wasCanceled() ) {
       } else {
         SIFT.readFields( siftOptionsDialog, param.p );
                         
-        stackImp = new ImagePlus( inputPath );
+        stackImp = inputPath.equals( "" ) ? IJ.getImage() : new ImagePlus( inputPath );
         stack    = ImagePlusAdapter.wrapFloat( stackImp );
                         
         sps       = new SiftPairwiseSimilarity( param );
