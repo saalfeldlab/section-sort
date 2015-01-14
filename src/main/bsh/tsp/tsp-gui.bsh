@@ -10,6 +10,7 @@ import java.lang.Number;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
+import mpicbg.ij.SIFT;
 import mpicbg.models.AffineModel2D;
 
 import net.imglib2.img.ImagePlusAdapter;
@@ -107,12 +108,12 @@ if ( optionsDialog.wasCanceled() ) {
     stackOptionsDialog.addNumericField( "minNumInliers", param.minNumInliers, 0 );
     stackOptionsDialog.addNumericField( "nThreads", param.nThreads, 0 );
     stackOptionsDialog.addNumericField( "range", param.range, 0 );
-    stackOptionsDialog.addNumericField( "fdSize", param.p.fdSize, 0 );
-    stackOptionsDialog.addNumericField( "fdBins", param.p.fdBins, 0 );
-    stackOptionsDialog.addNumericField( "maxOctaveSize", param.p.maxOctaveSize, 0 );
-    stackOptionsDialog.addNumericField( "minOctaveSize", param.p.minOctaveSize, 0 );
-    stackOptionsDialog.addNumericField( "steps", param.p.steps, 0 );
-    stackOptionsDialog.addNumericField( "initialSigma", param.p.initialSigma, 4 );
+    // stackOptionsDialog.addNumericField( "fdSize", param.p.fdSize, 0 );
+    // stackOptionsDialog.addNumericField( "fdBins", param.p.fdBins, 0 );
+    // stackOptionsDialog.addNumericField( "maxOctaveSize", param.p.maxOctaveSize, 0 );
+    // stackOptionsDialog.addNumericField( "minOctaveSize", param.p.minOctaveSize, 0 );
+    // stackOptionsDialog.addNumericField( "steps", param.p.steps, 0 );
+    // stackOptionsDialog.addNumericField( "initialSigma", param.p.initialSigma, 4 );
     stackOptionsDialog.addRadioButtonGroup( "Show matrix progress while being filled", new String[] { "yes", "no" }, 1, 2, param.showProgress ? "yes" : "no" );
     stackOptionsDialog.showDialog();
     if ( optionsDialog.wasCanceled() ) {
@@ -130,12 +131,19 @@ if ( optionsDialog.wasCanceled() ) {
     param.range          = Integer.parseInt( values.get( 6 ).text );
     param.showProgress   = radios.get( 0 ).getSelectedCheckbox().getLabel() == "yes";
     
-    param.p.fdSize        = Integer.parseInt( values.get(  7 ).text );
-    param.p.fdBins        = Integer.parseInt( values.get(  8 ).text );
-    param.p.maxOctaveSize = Integer.parseInt( values.get(  9 ).text );
-    param.p.minOctaveSize = Integer.parseInt( values.get( 10 ).text );
-    param.p.steps         = Integer.parseInt( values.get( 11 ).text );
-    param.p.initialSigma  = Float.parseFloat( values.get( 12 ).text );
+    // param.p.fdSize        = Integer.parseInt( values.get(  7 ).text );
+    // param.p.fdBins        = Integer.parseInt( values.get(  8 ).text );
+    // param.p.maxOctaveSize = Integer.parseInt( values.get(  9 ).text );
+    // param.p.minOctaveSize = Integer.parseInt( values.get( 10 ).text );
+    // param.p.steps         = Integer.parseInt( values.get( 11 ).text );
+    // param.p.initialSigma  = Float.parseFloat( values.get( 12 ).text );
+
+    siftOptionsDialog = new GenericDialog( "Options for calculating SIFT features." );
+    SIFT.addFields( siftOptionsDialog, param.p );
+    siftOptionsDialog.showDialog();
+    if ( !optionsDialog.wasCanceled() ) {
+       SIFT.readFields( siftOptionsDialog, param.p );
+    }
     
     stackImp = new ImagePlus( inputPath );
     stack    = ImagePlusAdapter.wrapFloat( stackImp );
