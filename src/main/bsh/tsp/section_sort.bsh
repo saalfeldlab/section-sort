@@ -53,6 +53,18 @@ File writeToFile( String data, String fn, tmpDir, suffix ) {
 }
 
 
+String join( String separator, Iterator it ) {
+  if ( ! it.hasNext() )
+    return null;
+  sb = new StringBuilder( it.next().toString() );
+  while( it.hasNext() ) {
+    sb.append( separator );
+    sb.append( it.next().toString() );
+  }
+  return sb.toString();
+}
+
+
 String join( String separator, Object[] arr ) {
   size = arr.length;
   if ( size < 1 )
