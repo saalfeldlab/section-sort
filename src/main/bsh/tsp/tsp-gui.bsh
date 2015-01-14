@@ -116,43 +116,46 @@ if ( optionsDialog.wasCanceled() ) {
     // stackOptionsDialog.addNumericField( "initialSigma", param.p.initialSigma, 4 );
     stackOptionsDialog.addRadioButtonGroup( "Show matrix progress while being filled", new String[] { "yes", "no" }, 1, 2, param.showProgress ? "yes" : "no" );
     stackOptionsDialog.showDialog();
-    if ( optionsDialog.wasCanceled() ) {
+    if ( stackOptionsDialog.wasCanceled() ) {
      // keep default parameters?
-    }
-    values = stackOptionsDialog.getNumericFields();
-    radios = stackOptionsDialog.getRadioButtonGroups();
+    } else {
+      values = stackOptionsDialog.getNumericFields();
+      radios = stackOptionsDialog.getRadioButtonGroups();
+                      
+      param.maxSteps       = Integer.parseInt( values.get( 0 ).text );
+      param.rod            = Float.parseFloat( values.get( 1 ).text );
+      param.maxEpsilon     = Float.parseFloat( values.get( 2 ).text );
+      param.minInlierRatio = Float.parseFloat( values.get( 3 ).text );
+      param.minNumInliers  = Integer.parseInt( values.get( 4 ).text );
+      param.nThreads       = Integer.parseInt( values.get( 5 ).text );
+      param.range          = Integer.parseInt( values.get( 6 ).text );
+      param.showProgress   = radios.get( 0 ).getSelectedCheckbox().getLabel() == "yes";
+                      
+      // param.p.fdSize        = Integer.parseInt( values.get(  7 ).text );
+      // param.p.fdBins        = Integer.parseInt( values.get(  8 ).text );
+      // param.p.maxOctaveSize = Integer.parseInt( values.get(  9 ).text );
+      // param.p.minOctaveSize = Integer.parseInt( values.get( 10 ).text );
+      // param.p.steps         = Integer.parseInt( values.get( 11 ).text );
+      // param.p.initialSigma  = Float.parseFloat( values.get( 12 ).text );
+                      
+      siftOptionsDialog = new GenericDialog( "Options for calculating SIFT features." );
+      SIFT.addFields( siftOptionsDialog, param.p );
+      siftOptionsDialog.showDialog();
+      if ( siftOptionsDialog.wasCanceled() ) {
 
-    param.maxSteps       = Integer.parseInt( values.get( 0 ).text );
-    param.rod            = Float.parseFloat( values.get( 1 ).text );
-    param.maxEpsilon     = Float.parseFloat( values.get( 2 ).text );
-    param.minInlierRatio = Float.parseFloat( values.get( 3 ).text );
-    param.minNumInliers  = Integer.parseInt( values.get( 4 ).text );
-    param.nThreads       = Integer.parseInt( values.get( 5 ).text );
-    param.range          = Integer.parseInt( values.get( 6 ).text );
-    param.showProgress   = radios.get( 0 ).getSelectedCheckbox().getLabel() == "yes";
-    
-    // param.p.fdSize        = Integer.parseInt( values.get(  7 ).text );
-    // param.p.fdBins        = Integer.parseInt( values.get(  8 ).text );
-    // param.p.maxOctaveSize = Integer.parseInt( values.get(  9 ).text );
-    // param.p.minOctaveSize = Integer.parseInt( values.get( 10 ).text );
-    // param.p.steps         = Integer.parseInt( values.get( 11 ).text );
-    // param.p.initialSigma  = Float.parseFloat( values.get( 12 ).text );
-
-    siftOptionsDialog = new GenericDialog( "Options for calculating SIFT features." );
-    SIFT.addFields( siftOptionsDialog, param.p );
-    siftOptionsDialog.showDialog();
-    if ( !optionsDialog.wasCanceled() ) {
-       SIFT.readFields( siftOptionsDialog, param.p );
+      } else {
+        SIFT.readFields( siftOptionsDialog, param.p );
+                        
+        stackImp = new ImagePlus( inputPath );
+        stack    = ImagePlusAdapter.wrapFloat( stackImp );
+                        
+        sps       = new SiftPairwiseSimilarity( param );
+        model     = new AffineModel2D();
+        matrixImp = sps.calculateSimilarityMatrix( stackImp, model );
+        matrix    = ImagePlusAdapter.wrapFloat( matrixImp );
+        stackImp.show();
+      }
     }
-    
-    stackImp = new ImagePlus( inputPath );
-    stack    = ImagePlusAdapter.wrapFloat( stackImp );
-    
-    sps       = new SiftPairwiseSimilarity( param );
-    model     = new AffineModel2D();
-    matrixImp = sps.calculateSimilarityMatrix( stackImp, model );
-    matrix    = ImagePlusAdapter.wrapFloat( matrixImp );
-    stackImp.show();
   }
 
   if ( matrix != null ) {
