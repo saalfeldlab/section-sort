@@ -33,7 +33,8 @@ File writeToFile( String data, String fn ) {
      file = File.createTempFile( "tmp", null );
   else
      file = new File( fn );
-  fs = new FileOutputStream( file.getName() );
+  file.setWritable( true );
+  fs = new FileOutputStream( file );
   final OutputStream buffer = new BufferedOutputStream( fs );
   final ObjectOutput output = new ObjectOutputStream(buffer);
   output.writeObject( data );
@@ -145,13 +146,14 @@ if ( optionsDialog.wasCanceled() ) {
     solutionFilename = solution;
     if ( solutionFilename.equals( "" ) ) {
        sf               = File.createTempFile( "tmp", null );
-       solutionFilename = sf.getName();
+       solutionFilename = sf.getAbsolutePath();
        sf.deleteOnExit();
+       sf.setWritable( true );
     }
     pf = writeToFile( distances, problemFilename );
     if ( problemFilename.equals( "" ) ) {
        pf.deleteOnExit();
-       problemFilename = pf.getName();
+       problemFilename = pf.getAbsolutePath();
     }
     // deleteOnExit() does not have any effect? WHY? ImageJ/FIJI related?
     proc   = TSP.runConcordeTSPSolver( concorde, problemFilename, solutionFilename );
