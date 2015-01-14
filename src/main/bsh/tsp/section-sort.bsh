@@ -95,8 +95,8 @@ optionsDialog.addRadioButtonGroup( "Input is stack or similarity matrix.", new S
 // optionsDialog.addStringField( "Path to input stack or matrix", "/hanslovskyp/workspace/section-sort/test_data_features.tif" );
 optionsDialog.addStringField( "Path to input stack or matrix (use current image if not specified)", "" );
 // optionsDialog.addStringField( "Path to concorde executable", "concorde" );
-optionsDialog.addStringField( "Path to tsp problem file (will be tmp if not specified)", "" );
-optionsDialog.addStringField( "Path to tsp solution file (will be tmp if not specified)", "" );
+// optionsDialog.addStringField( "Path to tsp problem file (will be tmp if not specified)", "" );
+// optionsDialog.addStringField( "Path to tsp solution file (will be tmp if not specified)", "" );
 optionsDialog.addStringField( "Path to section order result file (results will not be written to file if empty)" , "" );
 optionsDialog.showDialog();
 if ( optionsDialog.wasCanceled() ) {
@@ -109,8 +109,8 @@ if ( optionsDialog.wasCanceled() ) {
   choices             = optionsDialog.getStringFields();
   radios              = optionsDialog.getRadioButtonGroups();
   inputPath           = optionsDialog.getNextString();
-  problem             = optionsDialog.getNextString();
-  solution            = optionsDialog.getNextString();
+  problem             = // optionsDialog.getNextString();
+  solution            = // optionsDialog.getNextString();
   orderedSectionsFile = optionsDialog.getNextString();
   inputIsMatrix       = radios.get( 0 ).getSelectedCheckbox().getLabel() == "matrix";
   concorde            = fijiBinDir.replaceFirst( File.separator + "$", "" ) + File.separator + "concorde";
