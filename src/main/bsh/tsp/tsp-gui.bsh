@@ -28,9 +28,19 @@ import org.janelia.sort.tsp.conversion.SimilarityToDistanceSigmoid;
 
 
 File writeToFile( String data, String fn ) {
+  return writeToFile( data, fn, null );
+}
+
+
+File writeToFile( String data, String fn, tmpDir ) {
+  return writeToFile( data, fn, tmpDir, null );
+}
+
+
+File writeToFile( String data, String fn, tmpDir, suffix ) {
   file = null;
   if ( fn.equals( "" ) )
-     file = File.createTempFile( "tmp", null );
+     file = File.createTempFile( "tmp", suffix, new File( tmpDir ) );
   else
      file = new File( fn );
   file.setWritable( true );
@@ -58,6 +68,10 @@ File writeToFile( String data, String fn ) {
 //   }
 //   return dialog;
 // }
+
+
+sectionSortTempDir = System.getProperty( "java.io.tmpdir" ) + File.separator + "section-sort";
+new File( sectionSortTempDir ).mkdirs();
 
 
 optionsDialog = new GenericDialog( "Options for section-sort using TSP." );
@@ -145,12 +159,12 @@ if ( optionsDialog.wasCanceled() ) {
     problemFilename  = problem;
     solutionFilename = solution;
     if ( solutionFilename.equals( "" ) ) {
-       sf               = File.createTempFile( "tmp", null );
+       sf               = File.createTempFile( "tmp", null, new File( sectionSortTempDir ) );
        solutionFilename = sf.getAbsolutePath();
        sf.deleteOnExit();
        sf.setWritable( true );
     }
-    pf = writeToFile( distances, problemFilename );
+    pf = writeToFile( distances, problemFilename, sectionSortTempDir );
     if ( problemFilename.equals( "" ) ) {
        pf.deleteOnExit();
        problemFilename = pf.getAbsolutePath();
