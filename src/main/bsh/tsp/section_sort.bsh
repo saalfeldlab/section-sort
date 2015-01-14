@@ -162,10 +162,15 @@ if ( optionsDialog.wasCanceled() ) {
 
   if ( matrix != null ) {
     ImageJFunctions.show( matrix, "original matrix" );
-    n          = matrixImp.getHeight();
-    distances  = TSP.convertMatrix( matrix, new DataToStringFullMatrixTSPLIB(), new SimilarityToDistanceSigmoid( 10000.0 ) );
+    keep             = new ArrayList();
+    remove           = new ArrayList();
+    cleanMatrix      = TSP.cleanMatrix( matrix, remove, keep );
+    n                = (int) cleanMatrix.dimension( 0 );
+    distances        = TSP.convertMatrix( cleanMatrix, new DataToStringFullMatrixTSPLIB(), new SimilarityToDistanceSigmoid( 10000.0 ) );
     problemFilename  = problem;
     solutionFilename = solution;
+
+    ImageJFunctions.show( cleanMatrix, "matrix without bad sections" );
 
     rt = Runtime.getRuntime();
 
@@ -187,10 +192,12 @@ if ( optionsDialog.wasCanceled() ) {
        rt.addShutdownHook( t );
     }
     // deleteOnExit() does not have any effect? WHY? ImageJ/FIJI related? -> System.addShutDownHook
-    proc   = TSP.runConcordeTSPSolver( concorde, problemFilename, solutionFilename );
+    concordeDeleteFilenameArgument = "";
+    proc                           = TSP.runConcordeTSPSolver( concorde, problemFilename, solutionFilename, concordeDeleteFilenameArgument );
     proc.waitFor();
-    result = TSP.tspResultToArray( solutionFilename, (int)n );
-    sortedMatrix = TSP.rearrangeMatrix( matrix, result );
+    result       = TSP.tspResultToArray( solutionFilename, (int)n );
+    IJ.log( cleanMatrix + " " + result );
+    sortedMatrix = TSP.rearrangeMatrix( cleanMatrix, result );
     ImageJFunctions.show( sortedMatrix, "sorted matrix" );
     IJ.log( "Section order: " + Arrays.toString( result ) );
     if ( ! orderedSectionsFile.equals( "" ) ) {
