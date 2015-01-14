@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.lang.Number;
 import java.lang.StringBuilder;
+import java.lang.Thread;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
@@ -181,18 +182,27 @@ if ( optionsDialog.wasCanceled() ) {
     distances  = TSP.convertMatrix( matrix, new DataToStringFullMatrixTSPLIB(), new SimilarityToDistanceSigmoid( 10000.0 ) );
     problemFilename  = problem;
     solutionFilename = solution;
+
+    rt = Runtime.getRuntime();
+
     if ( solutionFilename.equals( "" ) ) {
        sf               = File.createTempFile( "tmp", null, new File( sectionSortTempDir ) );
        solutionFilename = sf.getAbsolutePath();
-       sf.deleteOnExit();
+       r = new Runnable() { void run() { if (!sf.delete()) sf.deleteOnExit(); } };
+       t = new Thread( r );
+       rt.addShutdownHook( t );
        sf.setWritable( true );
     }
+    
     pf = writeToFile( distances, problemFilename, sectionSortTempDir );
     if ( problemFilename.equals( "" ) ) {
        pf.deleteOnExit();
        problemFilename = pf.getAbsolutePath();
+       r = new Runnable() { void run() { if (!pf.delete()) pf.deleteOnExit(); } };
+       t = new Thread( r );
+       rt.addShutdownHook( t );
     }
-    // deleteOnExit() does not have any effect? WHY? ImageJ/FIJI related?
+    // deleteOnExit() does not have any effect? WHY? ImageJ/FIJI related? -> System.addShutDownHook
     proc   = TSP.runConcordeTSPSolver( concorde, problemFilename, solutionFilename );
     proc.waitFor();
     result = TSP.tspResultToArray( solutionFilename, (int)n );
