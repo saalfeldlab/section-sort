@@ -216,7 +216,6 @@ if ( optionsDialog.wasCanceled() ) {
     proc                           = TSP.runConcordeTSPSolver( concorde, problemFilename, solutionFilename, concordeDeleteFilenameArgument );
     proc.waitFor();
     result       = TSP.tspResultToArray( solutionFilename, (int)n );
-    IJ.log( cleanMatrix + " " + result );
     sortedMatrix = TSP.rearrangeMatrix( cleanMatrix, result );
     ImageJFunctions.show( sortedMatrix, "sorted matrix" );
     IJ.log( "Section order: " + Arrays.toString( result ) );
