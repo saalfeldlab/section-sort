@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.lang.Number;
+import java.lang.String;
 import java.lang.StringBuilder;
 import java.lang.Thread;
 import java.lang.reflect.Field;
@@ -110,23 +111,23 @@ fijiBinDir  = fijiRootDir.replaceFirst( File.separator + "$", "" ) + File.separa
 optionsDialog = new GenericDialogPlus( "Options for section-sort using TSP." );
 optionsDialog.addRadioButtonGroup( "Input is stack or similarity matrix.", new String[] { "stack", "matrix" }, 1, 2, "stack" );
 optionsDialog.addDirectoryOrFileField( "Path to input stack or matrix (use current image if not specified)", "" );
-optionsDialog.addDirectoryOrFileField( "Path to section order result file (results will not be written to file if empty)" , "" );
+optionsDialog.addDirectoryOrFileField( "Path to section directory for result files (existing files will be overwritten, results will not be written to file if empty)" , "" );
 optionsDialog.showDialog();
 if ( optionsDialog.wasCanceled() ) {
    // do something, just crash or show error message
 } else {
-  stackImp            = null;
-  stack               = null;
-  matrixImp           = null;
-  matrix              = null;
-  choices             = optionsDialog.getStringFields();
-  radios              = optionsDialog.getRadioButtonGroups();
-  inputPath           = optionsDialog.getNextString();
-  problem             = ""; // optionsDialog.getNextString();
-  solution            = ""; // optionsDialog.getNextString();
-  orderedSectionsFile = optionsDialog.getNextString();
-  inputIsMatrix       = radios.get( 0 ).getSelectedCheckbox().getLabel() == "matrix";
-  concorde            = fijiBinDir.replaceFirst( File.separator + "$", "" ) + File.separator + "concorde";
+  stackImp        = null;
+  stack           = null;
+  matrixImp       = null;
+  matrix          = null;
+  choices         = optionsDialog.getStringFields();
+  radios          = optionsDialog.getRadioButtonGroups();
+  inputPath       = optionsDialog.getNextString();
+  problem         = ""; // optionsDialog.getNextString();
+  solution        = ""; // optionsDialog.getNextString();
+  resultDirectory = optionsDialog.getNextString();
+  inputIsMatrix   = radios.get( 0 ).getSelectedCheckbox().getLabel() == "matrix";
+  concorde        = fijiBinDir.replaceFirst( File.separator + "$", "" ) + File.separator + "concorde";
   
   if ( inputIsMatrix ) {
     matrixImp = inputPath.equals( "" ) ? IJ.getImage() : new ImagePlus( inputPath );
@@ -218,11 +219,28 @@ if ( optionsDialog.wasCanceled() ) {
     sortedMatrix = TSP.rearrangeMatrix( cleanMatrix, result );
     ImageJFunctions.show( sortedMatrix, "sorted matrix" );
     IJ.log( "Section order: " + Arrays.toString( result ) );
-    if ( ! orderedSectionsFile.equals( "" ) ) {
-      resultObjects = new Integer[ result.length ];
-      for ( int i = 0; i < result.length; ++i )
-        resultObjects[i] = result[i];
-      writeToFile( join( "\n", resultObjects ), orderedSectionsFile );
+    if ( ! resultDirectory.equals( "" ) ) {
+      targetDir = new File( resultDirectory );
+      targetDir.mkdirs();
+      forwardMappingFile  = resultDirectory + File.separator + "forward-mapping";
+      backwardMappingFile = resultDirectory + File.separator + "backward-mapping";
+      removedSectionsFile = resultDirectory + File.separator + "removed-sections";
+      resultObjects       = new Integer[ result.length ];
+      forwardMappings     = new String[ result.length ];
+      backwardMappings    = new String[ result.length ];
+      removedSections     = new Long[ remove.size() ];
+      for ( int i = 0; i < result.length; ++i ) {
+        currVal                  = result[i];
+        resultObjects[i]         = currVal; 
+        forwardMappings[currVal] = currVal + "," + i;
+        backwardMappings[i]      = i + "," + currVal;
+      }
+      for ( int i = 0; i < remove.size(); ++i ) {
+        removedSections[i] = remove.get( i );
+      }
+      writeToFile( join( "\n", forwardMappings ), forwardMappingFile );
+      writeToFile( join( "\n", backwardMappings ), backwardMappingFile );
+      writeToFile( remove.size() > 0 ? join( "\n", removedSections ) : "", removedSectionsFile );
     }
     if ( stackImp != null ) {
       cleanStack = duplicateWithoutMissing( stackImp.getStack(), remove );
