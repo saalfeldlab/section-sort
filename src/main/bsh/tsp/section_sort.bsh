@@ -211,7 +211,6 @@ if ( optionsDialog.wasCanceled() ) {
        t = new Thread( r );
        rt.addShutdownHook( t );
     }
-    // deleteOnExit() does not have any effect? WHY? ImageJ/FIJI related? -> System.addShutDownHook
     concordeDeleteFilenameArgument = "";
     proc                           = TSP.runConcordeTSPSolver( concorde, problemFilename, solutionFilename, concordeDeleteFilenameArgument );
     proc.waitFor();
