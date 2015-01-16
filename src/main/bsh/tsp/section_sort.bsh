@@ -242,6 +242,19 @@ if ( optionsDialog.wasCanceled() ) {
       writeToFile( join( "\n", backwardMappings ), backwardMappingFile );
       writeToFile( remove.size() > 0 ? join( "\n", removedSections ) : "", removedSectionsFile );
     }
+
+    if ( stackImp == null ) {
+      addStackForSortingDialog = new GenericDialogPlus( "No image stack present. IF you would like to rearrange a stack, please specify a path to the stack. Click cancel otherwise.");
+      addStackForSortingDialog.addDirectoryOrFileField( "Path to image stack : ", "" );
+      addStackForSortingDialog.showDialog();
+      stackPath = addStackForSortingDialog.getNextString();
+      if ( ( ! addStackForSortingDialog.wasCanceled() ) && ( ! stackPath.equals( "" ) ) ) {
+        stackImp = new ImagePlus( stackPath );
+        if ( stackImp.getHeight() == 0 || stackImp.getWidth() == 0 )
+          stackImp = null;
+      }
+    }
+
     if ( stackImp != null ) {
       cleanStack = duplicateWithoutMissing( stackImp.getStack(), remove );
       cleanImp   = new ImagePlus( "clean stack", cleanStack );
