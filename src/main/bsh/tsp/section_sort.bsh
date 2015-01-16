@@ -244,7 +244,8 @@ if ( optionsDialog.wasCanceled() ) {
     }
 
     if ( stackImp == null ) {
-      addStackForSortingDialog = new GenericDialogPlus( "No image stack present. IF you would like to rearrange a stack, please specify a path to the stack. Click cancel otherwise.");
+      addStackForSortingDialog = new GenericDialogPlus( "Add stack for rearrangement." );
+      addStackForSortingDialog.addMessage( "No image stack present. If you would like to rearrange a stack, \nplease specify a path to the stack. Click cancel otherwise." );
       addStackForSortingDialog.addDirectoryOrFileField( "Path to image stack : ", "" );
       addStackForSortingDialog.showDialog();
       stackPath = addStackForSortingDialog.getNextString();
