@@ -137,13 +137,13 @@ if ( optionsDialog.wasCanceled() ) {
     // stackOptionsDialog = createDefaultDialog( param, 
     //                                           "Options for calculating pairwise similarities." );
     stackOptionsDialog = new GenericDialog( "Options for calculating pairwise similarities." );
-    stackOptionsDialog.addNumericField( "maxSteps", param.maxSteps, 0 );
-    stackOptionsDialog.addNumericField( "rod", param.rod, 4 );
-    stackOptionsDialog.addNumericField( "maxEpsilon", param.maxEpsilon, 4 );
-    stackOptionsDialog.addNumericField( "minInlierRatio", param.minInlierRatio, 4 );
-    stackOptionsDialog.addNumericField( "minNumInliers", param.minNumInliers, 0 );
-    stackOptionsDialog.addNumericField( "nThreads", param.nThreads, 0 );
-    stackOptionsDialog.addNumericField( "range", param.range, 0 );
+    stackOptionsDialog.addNumericField( "maxSteps : ", param.maxSteps, 0 );
+    stackOptionsDialog.addNumericField( "rod : ", param.rod, 4 );
+    stackOptionsDialog.addNumericField( "maxEpsilon : ", param.maxEpsilon, 4 );
+    stackOptionsDialog.addNumericField( "minInlierRatio : ", param.minInlierRatio, 4 );
+    stackOptionsDialog.addNumericField( "minNumInliers : ", param.minNumInliers, 0 );
+    stackOptionsDialog.addNumericField( "nThreads : ", param.nThreads, 0 );
+    stackOptionsDialog.addNumericField( "range : ", param.range, 0 );
     stackOptionsDialog.addRadioButtonGroup( "Show matrix progress while being filled", new String[] { "yes", "no" }, 1, 2, param.showProgress ? "yes" : "no" );
     stackOptionsDialog.showDialog();
     if ( stackOptionsDialog.wasCanceled() ) {
