@@ -254,7 +254,7 @@ public class TSP {
 	 * @param cs charset for text file
 	 * @return int[] that associates with each index (of the target matrix) the reference section from the original matrix, return value is null in case of exception
 	 */
-	public static int[] tspResultToArray( final String tspResultFileName, final int n, final Charset cs, IntType dummyIndex ) {
+	public static int[] tspResultToArray( final String tspResultFileName, final int n, final Charset cs, final IntType dummyIndex ) {
 		final int[] result = new int[ n ];
 		try {
 //			final List<String> lines = Files.readAllLines( Paths.get( tspResultFileName), cs);
