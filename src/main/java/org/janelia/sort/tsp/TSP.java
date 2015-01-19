@@ -313,44 +313,16 @@ public class TSP {
 	 * @return int[] that associates with each index (of the target matrix) the reference section from the original matrix, return value is null in case of exception
 	 */
 	public static int[] tspResultToArrayRespectDummyNode( final String tspResultFileName, final int n, final Charset cs ) {
-		final int[] result = new int[ n ];
-		int dummyIndex     = 0;
-		try {
-//			final List<String> lines = Files.readAllLines( Paths.get( tspResultFileName), cs);
-			final ArrayList<String> lines = new ArrayList< String >();
-			final File f = new File( tspResultFileName );
-			final FileReader fr = new FileReader( f );
-			final BufferedReader br = new BufferedReader( fr );
-			String line = null;
-			while ( ( line = br.readLine() ) != null )
-				lines.add( line );
-			// first line is number of variables, which must be n+1 because of dummy variable in TSP
-			final int nVariables = Integer.parseInt( lines.get( 0 ) );
-			if ( nVariables != n+1 )
-				return null; // TODO Something better than returning null?
-			int targetIndex = 0;
-			// loop through result and add numbers into result array in the order in which they appear
-			// ignore dummy variable with index n
-			for ( int listIndex = 1; listIndex < lines.size(); ++listIndex ) {
-				final String[] currSplit = lines.get( listIndex ).split( " " );
-				for ( final String s : currSplit ) {
-					final int val = Integer.parseInt( s );
-					// dummy variable has index n ~> ignore
-					if ( val == n ) {
-						dummyIndex = targetIndex; // or targetIndex? find out!
-						continue;
-					}
-					result[targetIndex] = val;
-					++targetIndex;
-				}
-			}
-		} catch (final IOException e) {
-			return null; // TODO Something better than returning null?
-		}
-		if ( dummyIndex < n ) {
-			int[] tmp = result.clone();
+		
+		final IntType dummyIndexObject = new IntType();
+		final int[] result            = tspResultToArray( tspResultFileName, n, cs, dummyIndexObject ); // get ordering and position in array of dummy node
+		final int dummyIndex          = dummyIndexObject.get();
+		
+		// if proper result has been returned, shift
+		if ( result != null && dummyIndex < n ) {
+			final int[] tmp = result.clone();
 			for ( int i = 0; i < tmp.length; ++i ) {
-				int index = ( i - dummyIndex + n ) % n;
+				final int index = ( i - dummyIndex + n ) % n;
 				result[ index ] = tmp[ i ];
 			}
 		}
