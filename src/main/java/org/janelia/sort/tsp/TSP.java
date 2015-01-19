@@ -18,6 +18,7 @@ import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
@@ -242,6 +243,18 @@ public class TSP {
 	 * @return int[] that associates with each index (of the target matrix) the reference section from the original matrix, return value is null in case of exception
 	 */
 	public static int[] tspResultToArray( final String tspResultFileName, final int n, final Charset cs ) {
+		return tspResultToArray( tspResultFileName, n, cs, new IntType() );
+	}
+	
+	
+	/**
+	 * Translate concorde result into array that associates the array index with sections in the original matrix
+	 * @param tspResultFileName path to the output of the concorde output
+	 * @param n number of sections
+	 * @param cs charset for text file
+	 * @return int[] that associates with each index (of the target matrix) the reference section from the original matrix, return value is null in case of exception
+	 */
+	public static int[] tspResultToArray( final String tspResultFileName, final int n, final Charset cs, IntType dummyIndex ) {
 		final int[] result = new int[ n ];
 		try {
 //			final List<String> lines = Files.readAllLines( Paths.get( tspResultFileName), cs);
@@ -264,8 +277,10 @@ public class TSP {
 				for ( final String s : currSplit ) {
 					final int val = Integer.parseInt( s );
 					// dummy variable has index n ~> ignore
-					if ( val == n )
+					if ( val == n ) {
+						dummyIndex.set( listIndex );
 						continue;
+					}
 					result[targetIndex] = val;
 					++targetIndex;
 				}
@@ -274,6 +289,73 @@ public class TSP {
 			return null; // TODO Something better than returning null?
 		}
 		return result;
+	}
+	
+	
+	/**
+	 * Translate concorde result into array that associates the array index with sections in the original matrix
+	 * The indices will be shifted such that the dummy element would be at position -1.
+	 * @param tspResultFileName path to the output of the concorde output
+	 * @param n number of sections
+	 * @return int[] that associates with each index (of the target matrix) the reference section from the original matrix, return value is null in case of exception
+	 */
+	public static int[] tspResultToArrayRespectDummyNode( final String tspResultFileName, final int n ) {
+		return tspResultToArrayRespectDummyNode( tspResultFileName, n, Charset.defaultCharset() );
+	}
+	
+	
+	/**
+	 * Translate concorde result into array that associates the array index with sections in the original matrix
+	 * The indices will be shifted such that the dummy element would be at position -1.
+	 * @param tspResultFileName path to the output of the concorde output
+	 * @param n number of sections
+	 * @param cs charset for text file
+	 * @return int[] that associates with each index (of the target matrix) the reference section from the original matrix, return value is null in case of exception
+	 */
+	public static int[] tspResultToArrayRespectDummyNode( final String tspResultFileName, final int n, final Charset cs ) {
+		final int[] result = new int[ n ];
+		int dummyIndex     = 0;
+		try {
+//			final List<String> lines = Files.readAllLines( Paths.get( tspResultFileName), cs);
+			final ArrayList<String> lines = new ArrayList< String >();
+			final File f = new File( tspResultFileName );
+			final FileReader fr = new FileReader( f );
+			final BufferedReader br = new BufferedReader( fr );
+			String line = null;
+			while ( ( line = br.readLine() ) != null )
+				lines.add( line );
+			// first line is number of variables, which must be n+1 because of dummy variable in TSP
+			final int nVariables = Integer.parseInt( lines.get( 0 ) );
+			if ( nVariables != n+1 )
+				return null; // TODO Something better than returning null?
+			int targetIndex = 0;
+			// loop through result and add numbers into result array in the order in which they appear
+			// ignore dummy variable with index n
+			for ( int listIndex = 1; listIndex < lines.size(); ++listIndex ) {
+				final String[] currSplit = lines.get( listIndex ).split( " " );
+				for ( final String s : currSplit ) {
+					final int val = Integer.parseInt( s );
+					// dummy variable has index n ~> ignore
+					if ( val == n ) {
+						dummyIndex = targetIndex; // or targetIndex? find out!
+						continue;
+					}
+					result[targetIndex] = val;
+					++targetIndex;
+				}
+			}
+		} catch (final IOException e) {
+			return null; // TODO Something better than returning null?
+		}
+		if ( dummyIndex < n ) {
+			int[] tmp = result.clone();
+			for ( int i = 0; i < tmp.length; ++i ) {
+				int index = ( i - dummyIndex + n ) % n;
+				result[ index ] = tmp[ i ];
+			}
+		}
+		
+		return result; 
 	}
 	
 	
