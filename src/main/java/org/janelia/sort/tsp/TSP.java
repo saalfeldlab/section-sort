@@ -278,7 +278,7 @@ public class TSP {
 					final int val = Integer.parseInt( s );
 					// dummy variable has index n ~> ignore
 					if ( val == n ) {
-						dummyIndex.set( listIndex );
+						dummyIndex.set( targetIndex );
 						continue;
 					}
 					result[targetIndex] = val;
