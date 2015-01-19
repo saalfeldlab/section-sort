@@ -24,6 +24,7 @@ import net.imglib2.view.Views;
 
 import org.janelia.sort.tsp.conversion.DataToStringInterface;
 import org.janelia.sort.tsp.conversion.SimilarityToDistanceInterface;
+import org.janelia.utility.arrays.ArrayOps;
 
 /**
  * @author Philipp Hanslovsky <hanslovskyp@janelia.hhmi.org>
@@ -321,10 +322,7 @@ public class TSP {
 		// if proper result has been returned, shift
 		if ( result != null && dummyIndex < n ) {
 			final int[] tmp = result.clone();
-			for ( int i = 0; i < tmp.length; ++i ) {
-				final int index = ( i - dummyIndex + n ) % n;
-				result[ index ] = tmp[ i ];
-			}
+			ArrayOps.shift( tmp, result, dummyIndex );
 		}
 		
 		return result; 
