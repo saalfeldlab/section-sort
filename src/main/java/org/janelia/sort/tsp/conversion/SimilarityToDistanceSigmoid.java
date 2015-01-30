@@ -34,7 +34,7 @@ public class SimilarityToDistanceSigmoid implements
 	 * @param factor f
 	 */
 	public SimilarityToDistanceSigmoid( final double factor ) {
-		this( factor, 0.0, 0.0 );
+		this( factor, 0.0, 1000000 );
 	}
 
 
