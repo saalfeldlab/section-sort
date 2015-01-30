@@ -187,7 +187,7 @@ if ( optionsDialog.wasCanceled() ) {
     remove           = new ArrayList();
     cleanMatrix      = TSP.cleanMatrix( matrix, remove, keep );
     n                = (int) cleanMatrix.dimension( 0 );
-    distances        = TSP.convertMatrix( cleanMatrix, new DataToStringFullMatrixTSPLIB(), new SimilarityToDistanceSigmoid( 10000.0 ) );
+    distances        = TSP.convertMatrix( cleanMatrix, new DataToStringFullMatrixTSPLIB(), new SimilarityToDistanceSigmoid( 10000.0, 0.0, 1000000 ) );
     problemFilename  = problem;
     solutionFilename = solution;
 
