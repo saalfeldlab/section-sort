@@ -344,15 +344,7 @@ public class TSP {
 		} catch (final IOException e) {
 			return null; // TODO Something better than returning null?
 		}
-		if ( result[ 0 ] > result[ result.length - 1 ] ) {
-			final int halfLength = result.length / 2;
-			for ( int i = 0; i < halfLength; ++i ) {
-				final int fromEnd = result.length - i;
-				final int tmp     = result[ i ];
-				result[ i ]      = result[ fromEnd ];
-				result[fromEnd ] = tmp;
-			}
-		}
+
 		return result;
 	}
 	
@@ -389,6 +381,17 @@ public class TSP {
 			for ( int i = 0; i < tmp.length; ++i ) {
 				final int index = ( i - dummyIndex + n ) % n;
 				result[ index ] = tmp[ i ];
+			}
+		}
+		
+		// reorder such that result[0] < result[result.length - 1], i.e. just invert array
+		if ( result[ 0 ] > result[ result.length - 1 ] ) {
+			final int halfLength = result.length / 2;
+			for ( int i = 0; i < halfLength; ++i ) {
+				final int fromEnd = result.length - i - 1;
+				final int tmp     = result[ i ];
+				result[ i ]      = result[ fromEnd ];
+				result[fromEnd ] = tmp;
 			}
 		}
 		
