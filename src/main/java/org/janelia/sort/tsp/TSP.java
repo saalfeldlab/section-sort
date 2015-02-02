@@ -344,6 +344,15 @@ public class TSP {
 		} catch (final IOException e) {
 			return null; // TODO Something better than returning null?
 		}
+		if ( result[ 0 ] > result[ result.length - 1 ] ) {
+			final int halfLength = result.length / 2;
+			for ( int i = 0; i < halfLength; ++i ) {
+				final int fromEnd = result.length - i;
+				final int tmp     = result[ i ];
+				result[ i ]      = result[ fromEnd ];
+				result[fromEnd ] = tmp;
+			}
+		}
 		return result;
 	}
 	
