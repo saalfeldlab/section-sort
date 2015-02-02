@@ -233,15 +233,16 @@ if ( optionsDialog.wasCanceled() ) {
       forwardMappingFile  = resultDirectory + File.separator + "forward-mapping";
       backwardMappingFile = resultDirectory + File.separator + "backward-mapping";
       removedSectionsFile = resultDirectory + File.separator + "removed-sections";
-      resultObjects       = new Integer[ result.length ];
-      forwardMappings     = new String[ result.length ];
-      backwardMappings    = new String[ result.length ];
+      resultObjects       = new Integer[ resultWithBadSections.length ];
+      forwardMappings     = new String[ resultWithBadSections.length ];
+      backwardMappings    = new String[ resultWithBadSections.length ];
       removedSections     = new Long[ remove.size() ];
-      for ( int i = 0; i < result.length; ++i ) {
-        currVal                  = result[i];
+      for ( int i = 0; i < resultWithBadSections.length; ++i ) {
+        currVal                  = resultWithBadSections[i];
+        currStatus               = sectionStatus[currVal];
         resultObjects[i]         = currVal; 
-        forwardMappings[currVal] = currVal + "," + i;
-        backwardMappings[i]      = i + "," + currVal;
+        forwardMappings[currVal] = currVal + "," + i + "," + ( currStatus ? 1 : 0 );
+        backwardMappings[i]      = i + "," + currVal + "," + ( currStatus ? 1 : 0 );
       }
       for ( int i = 0; i < remove.size(); ++i ) {
         removedSections[i] = remove.get( i );
