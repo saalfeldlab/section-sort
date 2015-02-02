@@ -94,10 +94,12 @@ public class TSPTest {
 		
 
 		
-		final ArrayList<Long> keptIndices    = new ArrayList< Long >();
-		final ArrayList<Long> removedIndices = new ArrayList< Long >();
+		final ArrayList<Long> keptIndices              = new ArrayList< Long >();
+		final ArrayList<Long> removedIndices           = new ArrayList< Long >();
+		final ArrayList<ArrayList<Long>> badSuccessors = new ArrayList< ArrayList< Long > >();
+		final boolean[] sectionStatus                  = new boolean[ (int) matrixWithHoles.dimension( 0 ) ];
 		
-		final RandomAccessibleInterval<FloatType> matrixWithoutHoles = TSP.cleanMatrix( matrixWithHoles, removedIndices, keptIndices );
+		final RandomAccessibleInterval<FloatType> matrixWithoutHoles = TSP.cleanMatrix( matrixWithHoles, removedIndices, keptIndices, badSuccessors, sectionStatus );
 		
 		Assert.assertEquals( matrixWithoutHolesReference.dimension( 0 ), keptIndices.size() );
 		

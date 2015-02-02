@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
@@ -69,20 +70,24 @@ public class TSP {
 	}
 	
 	
+	
 	/**
 	 * Clean similarity matrix from "empty" sections 
 	 * @param matrix input matrix
 	 * @param removedIndices output parameter for removed row/column indices
 	 * @param keptIndices output parameter for remaining row/column indices
+	 * @param sectionStatus output parameter that keeps boolean true for good sections, false otherwise
 	 * @return matrix without holes. If the original matrix does not have any holes, return original matrix.
 	 */
 	public static < T extends RealType< T > & NativeType< T > > RandomAccessibleInterval< T > cleanMatrix(
 			final RandomAccessibleInterval< T > matrix,
 			final ArrayList< Long > removedIndices,
-			final ArrayList< Long > keptIndices
+			final ArrayList< Long > keptIndices,
+			final ArrayList< ArrayList< Long > > badSuccessors,
+			final boolean[] sectionStatus
 			)
 	{
-		return cleanMatrix( matrix, removedIndices, keptIndices, new ArrayImgFactory<T>() );
+		return cleanMatrix( matrix, removedIndices, keptIndices, badSuccessors, sectionStatus, new ArrayImgFactory<T>() );
 	}
 	
 	/**
@@ -90,6 +95,7 @@ public class TSP {
 	 * @param matrix input matrix
 	 * @param removedIndices output parameter for removed row/column indices
 	 * @param keptIndices output parameter for remaining row/column indices
+	 * @param sectionStatus output parameter that keeps boolean true for good sections, false otherwise
 	 * @param factory ImgFactory used for creating output matrix.
 	 * @return matrix without holes. If the original matrix does not have any holes, return original matrix.
 	 */
@@ -97,6 +103,8 @@ public class TSP {
 			final RandomAccessibleInterval< T > matrix,
 			final ArrayList< Long > removedIndices,
 			final ArrayList< Long > keptIndices,
+			final ArrayList< ArrayList< Long > > badSuccessors,
+			final boolean[] sectionStatus,
 			final ImgFactory< T > factory
 			)
 	{
@@ -112,6 +120,7 @@ public class TSP {
 		//    store index for removal
 		// else:
 		//    store index for result matrix
+		ArrayList<Long> bs = new ArrayList< Long >();
 		for ( long i = 0; i < n; ++i ) {
 			final Cursor<T> row = Views.flatIterable( Views.hyperSlice( matrix, 0, i ) ).cursor();
 			boolean isBad = true;
@@ -119,14 +128,19 @@ public class TSP {
 				final double val = row.next().getRealDouble();
 				// as soon as a non-zero value is also not NaN, break and store index
 				if ( !Double.isNaN( val ) && val != 0.0 ) {
+					bs = new ArrayList< Long >();
+					badSuccessors.add( bs );
 					isBad = false;
 					keptIndices.add( i );
+					sectionStatus[ (int)i ] = true;
 					break;
 				}
 			}
 			// if only zero or NaN values, remove index
 			if ( isBad ) {
 				removedIndices.add( i );
+				sectionStatus[ (int)i ] = false;
+				bs.add( i );
 			}
 		}
 		
@@ -153,6 +167,48 @@ public class TSP {
 		}
 		else {
 			return matrix;
+		}
+		
+	}
+	
+	
+	public static void getMappings( final boolean[] sectionStatus, final TreeMap< Integer, Integer > fullToDeleted, final TreeMap< Integer, Integer > deletedToFull ) {
+		fullToDeleted.clear();
+		deletedToFull.clear();
+		for ( int fullIndex = 0, deletedIndex = 0; fullIndex < sectionStatus.length; ++fullIndex ) {
+			if ( !sectionStatus[ fullIndex ] )
+				continue;
+			fullToDeleted.put( fullIndex, deletedIndex );
+			deletedToFull.put( deletedIndex, fullIndex );
+			++deletedIndex;
+		}
+	}
+	
+	
+	public static int[] addInvalidSections( final int[] solution, final ArrayList< ArrayList< Long > > badSuccessors, final boolean[] sectionStatus, final int length ) {
+		final int[] result = new int[ length ];
+		addInvalidSections( solution, badSuccessors, sectionStatus, result );
+		return result;
+	}
+	
+	
+	public static void addInvalidSections( final int[] solution, final ArrayList< ArrayList< Long > > badSuccessors, final boolean[] sectionStatus, final int[] result ) {
+		
+		final TreeMap< Integer, Integer > fullToDeleted = new TreeMap< Integer, Integer >(); 
+		final TreeMap< Integer, Integer > deletedToFull = new TreeMap< Integer, Integer >();
+		getMappings( sectionStatus, fullToDeleted, deletedToFull);
+
+		int solutionIndex = 0;
+		int resultIndex   = 0;
+		for( ; solutionIndex < solution.length; ++solutionIndex, ++resultIndex ) {
+			final int currIndex = solution[ solutionIndex ];
+			final ArrayList<Long> bs = badSuccessors.get( currIndex );
+			final int fullIndex  = deletedToFull.get( currIndex );
+			result[ resultIndex ] = fullIndex;
+			for ( int k = 0; k < bs.size(); ++k ) {
+				++resultIndex;
+				result[ resultIndex ] = fullIndex + k + 1;
+			}
 		}
 		
 	}

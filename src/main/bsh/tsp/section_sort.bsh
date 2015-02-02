@@ -28,6 +28,7 @@ import org.janelia.similarity.SiftPairwiseSimilarity;
 import org.janelia.sort.tsp.TSP;
 import org.janelia.sort.tsp.conversion.DataToStringFullMatrixTSPLIB;
 import org.janelia.sort.tsp.conversion.SimilarityToDistanceSigmoid;
+import org.janelia.utility.Conversions;
 
 
 File writeToFile( String data, String fn ) {
@@ -185,7 +186,9 @@ if ( optionsDialog.wasCanceled() ) {
     ImageJFunctions.show( matrix, "original matrix" );
     keep             = new ArrayList();
     remove           = new ArrayList();
-    cleanMatrix      = TSP.cleanMatrix( matrix, remove, keep );
+    sectionStatus    = new boolean[ (int) matrix.dimension( 0 ) ];
+    badSuccessors    = new ArrayList();
+    cleanMatrix      = TSP.cleanMatrix( matrix, remove, keep, badSuccessors, sectionStatus );
     n                = (int) cleanMatrix.dimension( 0 );
     distances        = TSP.convertMatrix( cleanMatrix, new DataToStringFullMatrixTSPLIB(), new SimilarityToDistanceSigmoid( 10000.0, 0.0, 1000000 ) );
     problemFilename  = problem;
@@ -219,7 +222,11 @@ if ( optionsDialog.wasCanceled() ) {
     result       = TSP.tspResultToArrayRespectDummyNode( solutionFilename, (int)n );
     sortedMatrix = TSP.rearrangeMatrix( cleanMatrix, result );
     ImageJFunctions.show( sortedMatrix, "sorted matrix" );
-    IJ.log( "Section order: " + Arrays.toString( result ) );
+    resultWithBadSections       = TSP.addInvalidSections( result, badSuccessors, sectionStatus, (int)matrix.dimension( 0 ) );
+    sortedMatrixWithBadSections = TSP.rearrangeMatrix( matrix, resultWithBadSections );
+    ImageJFunctions.show( sortedMatrixWithBadSections, "sorted matrix including bad sections" );
+    IJ.log( "Section order (no bad sections): " + Arrays.toString( result ) );
+    IJ.log( "Section order:                   " + Arrays.toString( resultWithBadSections ) );
     if ( ! resultDirectory.equals( "" ) ) {
       targetDir = new File( resultDirectory );
       targetDir.mkdirs();
