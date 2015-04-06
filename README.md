@@ -62,7 +62,7 @@ cp <concorde-build-dir>/TSP/concorde <fiji-root>/bin
 
 Build section-sort and copy the jar into the jar directory of your Fiji distribution.
 ```
-cp <section-sort>/target/section-sort-0.0.1-SNAPSHOT.jar <fiji-root>/jars
+mvn clean install -Dimagej.app.directory=<fiji-root>/ -Ddelete.other.versions=true
 ```
 
 Copy section_sort.bsh into the plugins directory of your Fiji distribution.
