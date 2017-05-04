@@ -5,11 +5,13 @@ package org.janelia.sort.tsp.conversion;
 
 
 /**
- * @author Philipp Hanslovsky <hanslovskyp@janelia.hhmi.org>
+ * @author Philipp Hanslovsky &lt;hanslovskyp@janelia.hhmi.org&gt;
  * 
- * Transfer data matrix into tsplib format (<a href="http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/"</a>),
- * specifying the full matrix, for use with the concorde traveling salesman (TSP) solver
- * (<a href="http://www.math.uwaterloo.ca/tsp/concorde.html"</a>).
+ *         Transfer data matrix into <a href=
+ *         "http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/">tsplib
+ *         format</a>, specifying the full matrix, for use with the
+ *         <a href="http://www.math.uwaterloo.ca/tsp/concorde.html">concorde
+ *         traveling salesman (TSP) solver</a>.
  *
  */
 public class DataToStringFullMatrixTSPLIB implements DataToStringInterface {

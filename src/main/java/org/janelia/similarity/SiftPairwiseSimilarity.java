@@ -3,17 +3,16 @@
  */
 package org.janelia.similarity;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import mpicbg.ij.FeatureTransform;
 import mpicbg.ij.SIFT;
 import mpicbg.imagefeatures.Feature;
@@ -27,14 +26,13 @@ import mpicbg.models.PointMatch;
  * Calculate pairwise similarity matrix for image stack. To that end, extract SIFT  features for pairwise sections and 
  * find inliers and outliers of matches under a given model. The ratio of inliers to outliers + inliers will determine similarity
  * in the interval [0,1].
- * @author Stephan Saalfeld <saalfelds@janelia.hhmi.org>
- * @author Philipp Hanslovsky <hanslovskyp@janelia.hhmi.org>
+ * @author Stephan Saalfeld &lt;saalfelds@janelia.hhmi.org&gt;
+ * @author Philipp Hanslovsky &lt;hanslovskyp@janelia.hhmi.org&gt;
  *
  */
 public class SiftPairwiseSimilarity {
 	
 	/**
-	 * @author Philipp Hanslovsky <hanslovskyp@janelia.hhmi.org>
 	 * Helper class that holds parameters for pairwise sift feature extraction and matching. All members
 	 * are public for straight forward modification.
 	 */
@@ -75,10 +73,8 @@ public class SiftPairwiseSimilarity {
 	
 	
 	private final Param p;
-	
-	
+
 	/**
-	 * @param p Parameters for feature extraction and matching.
 	 * Construct SiftPairwiseSimilarity with default parameters.
 	 */
 	public SiftPairwiseSimilarity() {
@@ -99,7 +95,7 @@ public class SiftPairwiseSimilarity {
 	/**
 	 * @param ijSIFT {@link SIFT} object for extracting SIFT features.
 	 * @param ip ImageJ ImageProcessor from which SIFT features will be extracted.
-	 * @return ArrayList< Feature > List of extracted features.
+	 * @return List of extracted features.
 	 * Convenience function that wraps ijSIFT.extractFeatures.
 	 */
 	public static ArrayList< Feature > extract( final SIFT ijSIFT, final ImageProcessor ip ) {
@@ -131,11 +127,16 @@ public class SiftPairwiseSimilarity {
 	
 	
 	/**
-	 * @param model {@link Model} under which SIFT features should match, e.g. {@link AffineModel2D
-	 * @param features1 First set of features for matching.
-	 * @param features2 Second set of features for matching.
+	 * @param model
+	 *            {@link Model} under which SIFT features should match, e.g.
+	 *            {@link AffineModel2D}
+	 * @param features1
+	 *            First set of features for matching.
+	 * @param features2
+	 *            Second set of features for matching.
 	 * @return Similarity based on ratio of inliers to outliers + inliers
-	 * Determine similarity by matching two set of features and calculating the ratio of inliers to outliers + inliers.
+	 *         Determine similarity by matching two set of features and
+	 *         calculating the ratio of inliers to outliers + inliers.
 	 */
 	public < M extends Model< M > > double match( final M model, final List< Feature > features1, final List< Feature > features2 ) {
 		
@@ -172,10 +173,12 @@ public class SiftPairwiseSimilarity {
 	
 	
 	/**
-	 * @param imp {@link ImagePlus} containing the stack for which SIFT features are to be extracted.
-	 * @return List of features for each section of imp.
-	 * Extract in parallel for each section of imp SIFT features, using SIFT parameters as specified in
-	 * {@link Param.p}.
+	 * @param imp
+	 *            {@link ImagePlus} containing the stack for which SIFT features
+	 *            are to be extracted.
+	 * @return List of features for each section of imp. Extract in parallel for
+	 *         each section of imp SIFT features, using SIFT parameters as
+	 *         specified in {@link Param#p}.
 	 */
 	public ArrayList< List< Feature > > extractFeatures( final ImagePlus imp ) {
 		final ImageStack stack = imp.getStack();
@@ -220,11 +223,14 @@ public class SiftPairwiseSimilarity {
 	
 	
 	/**
-	 * @param featuresList List of features for each section.
-	 * @param model {@link Model} for transforming feature matches.
-	 * @return ImagePlus containing the pairwise similarity matrix.
-	 * Fit {@link Model} model to {@linkt PointMatch}es derived from featuresList and calculate similarity
-	 * matrix as the ratio of inliers and inliers + outliers
+	 * @param featuresList
+	 *            List of features for each section.
+	 * @param model
+	 *            {@link Model} for transforming feature matches.
+	 * @return ImagePlus containing the pairwise similarity matrix. Fit
+	 *         {@link Model} model to {@link PointMatch}es derived from
+	 *         featuresList and calculate similarity matrix as the ratio of
+	 *         inliers and inliers + outliers
 	 */
 	public < M extends Model< M > > ImagePlus matchFeaturesAndCalculateSimilarities( 
 			final ArrayList< List< Feature > > featuresList,

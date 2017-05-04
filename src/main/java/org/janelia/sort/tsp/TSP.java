@@ -11,6 +11,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+import org.janelia.sort.tsp.conversion.DataToStringInterface;
+import org.janelia.sort.tsp.conversion.SimilarityToDistanceInterface;
+
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
@@ -23,11 +26,8 @@ import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
-import org.janelia.sort.tsp.conversion.DataToStringInterface;
-import org.janelia.sort.tsp.conversion.SimilarityToDistanceInterface;
-
 /**
- * @author Philipp Hanslovsky <hanslovskyp@janelia.hhmi.org>
+ * @author Philipp Hanslovsky &lt;hanslovskyp@janelia.hhmi.org&gt;
  *
  * Collection of convenience functions for transferring a similarity matrix into a
  * traveling salesman problem (TSP) and rewriting the matrix according to the result.

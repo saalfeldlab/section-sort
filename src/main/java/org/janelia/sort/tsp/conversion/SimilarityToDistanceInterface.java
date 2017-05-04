@@ -4,7 +4,7 @@
 package org.janelia.sort.tsp.conversion;
 
 /**
- * @author Philipp Hanslovsky <hanslovskyp@janelia.hhmi.org>
+ * @author Philipp Hanslovsky &lt;hanslovskyp@janelia.hhmi.org&gt;
  *
  * Define how to derive distance from pairwise similarity measure.
  */

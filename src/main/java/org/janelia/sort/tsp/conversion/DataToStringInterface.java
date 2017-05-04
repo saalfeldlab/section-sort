@@ -4,7 +4,7 @@
 package org.janelia.sort.tsp.conversion;
 
 /**
- * @author Philipp Hanslovsky <hanslovskyp@janelia.hhmi.org>
+ * @author Philipp Hanslovsky &lt;hanslovskyp@janelia.hhmi.org&gt;
  *
  * Give rules on how to convert numeric data into {@link String} that can be understood by TSP solver.
  */
