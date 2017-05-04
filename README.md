@@ -3,7 +3,7 @@ section-sort
 
 Sorting serial sections using a TSP-solver
 
-##Dependencies
+## Dependencies
 
 [concorde][concorde] (free for academic use)
 [concorde]: http://www.math.uwaterloo.ca/tsp/concorde.html
@@ -14,7 +14,7 @@ Sorting serial sections using a TSP-solver
 [tsplib format][tsplib] (file format for feeding concorde with tsps)
 [tsplib]: http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95
 
-##Installation (Linux)
+## Installation (Linux)
 
 Download cplex 12.5 and install into `<cplex-install-dir>`. 
 ```
