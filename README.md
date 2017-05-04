@@ -5,14 +5,10 @@ Sorting serial sections using a TSP-solver
 
 ## Dependencies
 
-[concorde][concorde] (free for academic use)
-[concorde]: http://www.math.uwaterloo.ca/tsp/concorde.html
+ * [concorde](http://www.math.uwaterloo.ca/tsp/concorde.html) (free for academic use)
+ * [cplex](http://www-03.ibm.com/software/products/en/ibmilogcpleoptistud) (free with academic initiative)
+ * [tsplib format](http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95) (file format for feeding concorde with tsps)
 
-[cplex][cplex] (free with academic initiative)
-[cplex]: http://www-03.ibm.com/software/products/en/ibmilogcpleoptistud
-
-[tsplib format][tsplib] (file format for feeding concorde with tsps)
-[tsplib]: http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95
 
 ## Installation (Linux)
 
